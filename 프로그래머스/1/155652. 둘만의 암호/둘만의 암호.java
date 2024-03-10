@@ -1,17 +1,11 @@
 class Solution {
     public char moveStep(char s, String skip, int index){
         int cnt = 0;
-        while (true){
-            if (cnt==index) break;
-            if (s == 'z'){
-                s = 'a';
-            } else s++;
-            while (skip.contains(s+"")){
-                if (s == 'z'){
-                    s = 'a';
-                } else s++;
+        while (cnt < index){
+            s = s == 'z' ? 'a' : (char) (s+1);
+            if (!skip.contains(String.valueOf(s))){
+                cnt++;
             }
-            cnt++;
         }
         return s;
     }
