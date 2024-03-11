@@ -1,0 +1,32 @@
+import java.util.ArrayList;
+
+class Solution {
+    public int[] solution(String s) {
+        ArrayList<Integer> answer = new ArrayList<Integer>();
+        int cnt = 0;
+        int numCnt = 0;
+        while (s.length()>1){
+            // 0 제거하기
+            if (s.contains("0")){
+                while (s.contains("0")){
+                    s = s.replaceFirst("0", "");
+                    cnt++;
+                }
+            }
+           
+            // 2진법으로 표현하기
+            int num = s.length();
+            StringBuffer numStr = new StringBuffer("");
+            while (num != 0){
+                numStr.append(num % 2);
+                num /= 2;
+            }
+            s = numStr.reverse().toString();
+            numCnt++;
+        }
+        answer.add(numCnt);
+        answer.add(cnt); 
+        
+         return answer.stream().mapToInt(x->x).toArray();
+    }
+}
