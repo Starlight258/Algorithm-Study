@@ -22,7 +22,7 @@ class Solution {
         
         return Arrays.stream(data)
             .filter(row -> row[extIndex] < val_ext)
-            .sorted((row1, row2) -> Integer.compare(row1[sortByIndex], row2[sortByIndex]))
+            .sorted((row1, row2) -> row1[sortByIndex] - row2[sortByIndex])
             .toArray(int[][]::new);
     }
 }
