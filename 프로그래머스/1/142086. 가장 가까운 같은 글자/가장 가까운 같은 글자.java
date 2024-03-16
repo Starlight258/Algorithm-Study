@@ -5,11 +5,7 @@ class Solution {
         HashMap<Character, Integer> hm = new HashMap<>();
         char[] sList = s.toCharArray();
         for (int i=0;i<sList.length;i++) {
-            if (hm.containsKey(sList[i])){
-                answer[i] = i - hm.get(sList[i]);
-            } else {
-                answer[i] = -1;
-            }
+            answer[i] = i - hm.getOrDefault(sList[i], i+1);
             hm.put(sList[i], i);
         }
         return answer;
