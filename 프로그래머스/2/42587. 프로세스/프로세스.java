@@ -3,27 +3,25 @@ class Solution {
     public int solution(int[] priorities, int location) {
         int answer = 0;
         int cnt = 0;
-        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<Integer> q = new PriorityQueue<>(Collections.reverseOrder());
         HashMap<Integer, Integer> hm = new HashMap<>();
-        Queue<Integer> q = new LinkedList<>();
         for (int i=0;i<priorities.length;i++){
             hm.put(i, priorities[i]);
-            pq.offer(priorities[i]);
-            q.offer(i);
+            q.offer(priorities[i]);
         }
-        while (!pq.isEmpty()){
-            int pri = pq.poll();
-            while (!q.isEmpty()){
-                int idx = q.poll();
-                if (pri == hm.get(idx)){
-                    cnt++;
-                    if (idx == location) return cnt;
-                    break;
-                } else {
-                    q.offer(idx);
+    
+        while (!q.isEmpty()){
+            for(int i=0;i<priorities.length;i++){
+                if (q.peek() == priorities[i]){
+                    answer++;
+                    if (i == location){
+                        return answer;
+                    }
+                    q.poll();
                 }
             }
         }
+        
        
         return answer;
     }
