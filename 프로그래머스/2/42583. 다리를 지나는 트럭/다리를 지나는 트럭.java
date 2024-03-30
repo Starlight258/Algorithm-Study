@@ -1,29 +1,28 @@
 import java.util.*;
-
 class Solution {
     public int solution(int bridge_length, int weight, int[] truck_weights) {
+        int answer = 0;
+        int currentWeight=0;
+        int pos = 0;
         Queue<Integer> bridge = new LinkedList<>();
-        int time = 0;
-        int currentBridgeWeight = 0;
-        int index = 0;
-        
-        for (int i = 0; i < bridge_length; i++) {
+        // 다리 초기화 (1초에 1만큼 움직일 수 있다. 무게를 저장한다.)
+        for(int i=0;i<bridge_length;i++){
             bridge.offer(0);
         }
-        
-        while (index < truck_weights.length) {
-            currentBridgeWeight -= bridge.poll();
-            
-            if (currentBridgeWeight + truck_weights[index] <= weight) {
-                bridge.offer(truck_weights[index]);
-                currentBridgeWeight += truck_weights[index];
-                index++;
-            } else {
+        // 다리 건너기 시작한다.
+        while (pos < truck_weights.length){
+            currentWeight -= bridge.poll();
+            if (truck_weights[pos] + currentWeight <= weight){
+                currentWeight += truck_weights[pos];
+                bridge.offer(truck_weights[pos]);
+                pos++;
+            } else{
                 bridge.offer(0);
             }
-            time++;
+            answer++; // 시간 흐름
         }
         
-        return time + bridge_length;
+        
+        return answer + bridge_length;
     }
 }
