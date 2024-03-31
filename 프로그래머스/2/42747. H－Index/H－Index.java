@@ -11,7 +11,8 @@ class Solution {
                     cnt++;
                 }
             }
-            if (cnt>=h && cnt > answer){
+            if (cnt>=h){
+                if(cnt < answer) break;
                 answer = h;
             }
             h++;
