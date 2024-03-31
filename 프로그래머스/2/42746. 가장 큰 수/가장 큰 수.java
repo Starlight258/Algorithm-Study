@@ -1,7 +1,7 @@
 import java.util.*;
 class Solution {
     public String solution(int[] numbers) {
-        String answer = "";
+        StringBuilder answer = new StringBuilder("");
         String[] num = new String[numbers.length];
         for (int i=0;i<numbers.length;i++){
             num[i] = String.valueOf(numbers[i]);
@@ -12,9 +12,9 @@ class Solution {
             }
         });
         for (int i=0;i<num.length;i++){
-            answer += num[i];
+            answer.append(num[i]);
         }
-        if (answer.startsWith("0")) return "0";
-        return answer;
+        if (answer.substring(0,1).equals("0")) return "0";
+        return answer.toString();
     }
 }
