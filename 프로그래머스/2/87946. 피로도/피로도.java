@@ -1,26 +1,22 @@
 class Solution {
     int answer = 0;
-    int n;
-    int[][] dungeonList;
     boolean[] visited;
-    void play(int depth, int fatigue){
+    void play(int depth, int fatigue, int[][] dungeons){
         answer = Math.max(answer, depth);
-        for (int i=0;i<dungeonList.length;i++){
+        for (int i=0;i<dungeons.length;i++){
             if (!visited[i]){
                 visited[i] = true;
-                if (dungeonList[i][0] <= fatigue){
-                    play(depth+1, fatigue - dungeonList[i][1]);                    
+                if (dungeons[i][0] <= fatigue){
+                    play(depth+1, fatigue - dungeons[i][1], dungeons);                    
                 }
                 visited[i] = false;
             }
         }
     }
     public int solution(int k, int[][] dungeons) {
-        n = dungeons.length;
-        dungeonList = dungeons;
-        visited = new boolean[n];
+        visited = new boolean[dungeons.length];
    
-        play(0, k);
+        play(0, k, dungeons);
         
         return answer;
     }
