@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.regex.*;
 class File implements Comparable<File>{
     String head;
     int number;
@@ -20,12 +21,15 @@ class Solution {
     public String[] solution(String[] files) {
         String[] answer = new String[files.length];
         ArrayList<File> list = new ArrayList<File>();
+        Pattern pattern = Pattern.compile("\\d+");
         for (int i=0;i<files.length;i++){
-            String[] parts = files[i].split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-       
-            String head = parts[0];
-            String num = parts[1];
-            list.add(new File(head, Integer.parseInt(num), i));
+            Matcher matcher = pattern.matcher(files[i]);
+            String head =""; String num = "";
+            if (matcher.find()){
+                head = files[i].substring(0, matcher.start());
+                num = files[i].substring(matcher.start(), matcher.end());
+                list.add(new File(head, Integer.parseInt(num), i));
+            }
         }
         Collections.sort(list);
         for (int i=0;i<list.size();i++){
