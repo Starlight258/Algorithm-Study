@@ -4,6 +4,7 @@ class Solution {
         int answer = n - lost.length;
         int[] check = new int[n+1];
         Arrays.sort(lost);
+        Arrays.sort(reserve);
         for (int i=0;i<lost.length;i++){
             check[lost[i]] = -1;
         }
@@ -11,15 +12,13 @@ class Solution {
             check[reserve[i]] += 1;   
             if (check[reserve[i]] == 0) answer++;
         }
-        
         for (int i=0;i<lost.length;i++){
             int l = lost[i];
-            if (check[l]==0) continue;
             if (l-1 >=0 && check[l-1] > 0){
                 check[l-1] = 0;
                 answer++;
             } 
-            else if (l+1 <=n && check[l+1]>0){
+            else if (l+1 <n && check[l+1]>0){
                 check[l+1] = 0;
                 answer++;
             }
