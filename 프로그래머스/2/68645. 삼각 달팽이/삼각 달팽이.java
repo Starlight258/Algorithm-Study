@@ -1,51 +1,50 @@
+import java.util.*;
 class Solution {
     public int[] solution(int n) {
-        int[] answer = new int[n * (n + 1) / 2];
-        int[][] array = new int[n][n];
-        int num = 1;
-        int row = 0, col = 0;
-        int direction = 0;
-        
-        while (num <= n * (n + 1) / 2) {
-            array[row][col] = num++;
+        ArrayList<Integer> answer = new ArrayList<Integer>();
+        int[][] graph = new int[n][n];
+        int num = 0;
+        int nextY = 0;
+        int nextX = 0;
+        while (true){
+            // 1. 아래로 내려가기
+            for (int y=nextY,x=nextX;y<n;y++){
+                if (graph[y][x]>0) break;
+                graph[y][x] = ++num;
+                nextY = y;
+                nextX = x;
+            }
+            if (nextX+1>=n) break;
+            nextX++;
             
-            switch (direction) {
-                case 0:  // 아래 방향
-                    if (row + 1 < n && array[row + 1][col] == 0) {
-                        row++;
-                    } else {
-                        col++;
-                        direction = 1;
-                    }
-                    break;
-                case 1:  // 오른쪽 방향
-                    if (col + 1 < n && array[row][col + 1] == 0) {
-                        col++;
-                    } else {
-                        row--;
-                        col--;
-                        direction = 2;
-                    }
-                    break;
-                case 2:  // 대각선 위 방향
-                    if (row - 1 >= 0 && col - 1 >= 0 && array[row - 1][col - 1] == 0) {
-                        row--;
-                        col--;
-                    } else {
-                        row++;
-                        direction = 0;
-                    }
-                    break;
+            // 2. 오른쪽으로 쭉 가기
+            for (int x=nextX, y= nextY;x<n;x++){
+                if (graph[y][x]>0) break;
+                graph[y][x] = ++num;
+                nextY = y;
+                nextX = x;
+            }
+            if (nextY-1<=0 || nextX-1<=0) break;
+            nextY--; nextX--;
+            
+            // 3. 대각선으로 올라가기
+            for (int x=nextX,y =nextY;y>=0;y--,x--){
+                if (graph[y][x]>0) break;
+                graph[y][x] = ++num;
+                nextY = y;
+                nextX = x;
+            }
+            nextY++;
+            
+            if (nextY>=n||nextX>=n||nextY<0||nextX<0) break;
+            if (graph[nextY][nextX]>0) break;
+        }
+        // 정답 출력
+        for (int i=0;i<n;i++){
+            for (int j=0;j<=i;j++){
+                answer.add(graph[i][j]);
             }
         }
-        
-        int index = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j <= i; j++) {
-                answer[index++] = array[i][j];
-            }
-        }
-        
-        return answer;
+        return answer.stream().mapToInt(x->x).toArray();
     }
 }
