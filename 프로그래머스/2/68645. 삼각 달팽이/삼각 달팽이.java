@@ -8,33 +8,25 @@ class Solution {
         int nextX = 0;
         while (true){
             // 1. 아래로 내려가기
-            for (int y=nextY,x=nextX;y<n;y++){
-                if (graph[y][x]>0) break;
-                graph[y][x] = ++num;
-                nextY = y;
-                nextX = x;
+            while (nextY<n && graph[nextY][nextX]==0){
+                graph[nextY][nextX] = ++num;
+                nextY++;
             }
-            if (nextX+1>=n) break;
-            nextX++;
+            nextY--; nextX++;
             
             // 2. 오른쪽으로 쭉 가기
-            for (int x=nextX, y= nextY;x<n;x++){
-                if (graph[y][x]>0) break;
-                graph[y][x] = ++num;
-                nextY = y;
-                nextX = x;
+            while (nextX<n && graph[nextY][nextX]==0){
+                graph[nextY][nextX] = ++num;
+                nextX++;
             }
-            if (nextY-1<=0 || nextX-1<=0) break;
-            nextY--; nextX--;
+            nextY--; nextX-=2;
             
             // 3. 대각선으로 올라가기
-            for (int x=nextX,y =nextY;y>=0;y--,x--){
-                if (graph[y][x]>0) break;
-                graph[y][x] = ++num;
-                nextY = y;
-                nextX = x;
+            while (nextY>=0 && nextX>=0 && graph[nextY][nextX]==0){
+                graph[nextY][nextX] = ++num;
+                nextY--; nextX--;
             }
-            nextY++;
+            nextY+=2; nextX++;
             
             if (nextY>=n||nextX>=n||nextY<0||nextX<0) break;
             if (graph[nextY][nextX]>0) break;
