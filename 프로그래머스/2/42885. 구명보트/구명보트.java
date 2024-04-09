@@ -8,8 +8,8 @@ class Solution {
             int remain = limit - people[fpos];
             if (remain>=people[lpos]) {
                 fpos++; lpos--;
-            } else{
-                lpos--;
+            } else { // 20,30,50,70, 90
+                lpos--; // 30, 30, 30 // 90
             }
             answer++;
             if (fpos == lpos) answer++;
