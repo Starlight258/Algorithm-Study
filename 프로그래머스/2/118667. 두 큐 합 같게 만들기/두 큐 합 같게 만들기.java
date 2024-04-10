@@ -13,10 +13,12 @@ class Solution {
             sum += queue1[i] + queue2[i];
             sum1 += queue1[i];
         }
-        if (sum%2==1) return -1;
+        
         long sum2 = sum-sum1;
+        if (sum%2==1) return -1;
         sum /= 2; // 각각 만족해야하는 sum
         if (sum1==sum) return 0;
+        
         while (sum1 != sum || sum2!=sum){
             if (answer>n*3) return -1;
             if (sum1>sum){
@@ -25,7 +27,6 @@ class Solution {
                 sum1 = sum1 - e1;
                 sum2 = sum2 + e1;
                 answer++;
-                if (sum1 == sum2) break;
             }
             else{
                  int e2 = q2.poll();
@@ -33,7 +34,6 @@ class Solution {
                  sum2 = sum2 - e2;
                  sum1 = sum1 + e2;
                 answer++;
-                if (sum1 == sum2) break;
             }
             if (sum1 == sum2) break;
         }
