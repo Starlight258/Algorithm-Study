@@ -17,7 +17,6 @@ class Solution {
         long sum2 = sum-sum1;
         if (sum%2==1) return -1;
         sum /= 2; // 각각 만족해야하는 sum
-        if (sum1==sum) return 0;
         
         while (sum1 != sum || sum2!=sum){
             if (answer>n*3) return -1;
