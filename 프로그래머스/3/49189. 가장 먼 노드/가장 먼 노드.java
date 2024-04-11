@@ -1,16 +1,5 @@
 import java.util.*;
 class Solution {
-    class Node implements Comparable<Node> {
-        int idx;
-        int dist;
-        Node(int idx, int dist){
-            this.idx = idx;
-            this.dist = dist;
-        }
-        public int compareTo(Node n){
-            return this.dist - n.dist;
-        }
-    }
     public int solution(int n, int[][] edge) {
         ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
         int d[] = new int[n+1];
@@ -20,6 +9,7 @@ class Solution {
             graph.get(edge[i][0]).add(edge[i][1]);
             graph.get(edge[i][1]).add(edge[i][0]);
         }
+        
         PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
         pq.offer(1);
         d[1] = 0;
