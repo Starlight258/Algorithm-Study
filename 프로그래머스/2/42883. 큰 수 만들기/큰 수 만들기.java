@@ -1,18 +1,17 @@
 import java.util.*;
 class Solution {
     public String solution(String number, int k) {
-        StringBuilder answer = new StringBuilder("");
-        int answerLength = number.length() - k;
+        StringBuilder answer = new StringBuilder();
         Stack<Character> stk= new Stack<>();
-        for (char c:number.toCharArray()){
-            while (!stk.isEmpty() && stk.peek()<c && k>0){
+        int cnt = k;
+        for (char n:number.toCharArray()){
+            while (!stk.isEmpty() && n > stk.peek() && k>0){
                 stk.pop();
                 k--;
             }
-            stk.push(c);
+            stk.push(n);
         }
-
-        for (int i=0;i<answerLength;i++){
+        for (int i=0;i<number.length()-cnt;i++){
             answer.append(stk.get(i));
         }
        
