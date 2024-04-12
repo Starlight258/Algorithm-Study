@@ -13,13 +13,13 @@ class Solution {
             StringBuilder word = new StringBuilder(msg.charAt(pos)+"");
             int localPos = pos;
             int extra = -1;
-            while (localPos < msg.length() && hm.containsKey(word.toString())){
+            while (localPos++ < msg.length() && hm.containsKey(word.toString())){
                 extra++;
                 returnValue = hm.get(word.toString());
-                if (localPos+1 < msg.length()) word.append(msg.charAt(++localPos)+"");
-                else break;
+                if (localPos < msg.length()) word.append(msg.charAt(localPos)+"");
             }
             answer.add(returnValue);
+            
             if (!hm.containsKey(word.toString())){
               hm.put(word.toString(), dictionaryPos++);
             } 
