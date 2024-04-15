@@ -1,6 +1,5 @@
 class Solution {
     public int[] solution(int[] sequence, int k) {
-        int[] answer = {};
         int left = 0; int right = -1;
         int length = 1000001;
         int sLeft = 0; int sRight = 0;
@@ -14,7 +13,6 @@ class Solution {
                 }
                 sum -= sequence[left++];
             }
-            
             else if (sum<k){
                 if (++right < sequence.length) sum += sequence[right];
             } else {
