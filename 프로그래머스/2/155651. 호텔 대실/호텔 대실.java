@@ -1,32 +1,48 @@
 import java.util.*;
 
 class Solution {
+    class Reservation implements Comparable<Reservation>{
+        int start;
+        int end;
+        Reservation(int start, int end){
+            this.start = start;
+            this.end = end;
+        }
+        public int compareTo(Reservation r){
+            return this.start - r.start;
+        }
+    }
+    public int calculateTime(String inputTime){
+        String[] splitTime = inputTime.split(":");
+        int time = Integer.parseInt(splitTime[0]) * 60;
+        time += Integer.parseInt(splitTime[1]);
+        return time;
+    }
+
     public int solution(String[][] book_time) {
-        int[][] times = new int[book_time.length][2];
-        
-        // book_time을 분 단위로 변환하여 times 배열에 저장
-        for (int i = 0; i < book_time.length; i++) {
-            String[] start = book_time[i][0].split(":");
-            String[] end = book_time[i][1].split(":");
-            times[i][0] = Integer.parseInt(start[0]) * 60 + Integer.parseInt(start[1]);
-            times[i][1] = Integer.parseInt(end[0]) * 60 + Integer.parseInt(end[1]);
+        ArrayList<Reservation> list = new ArrayList<Reservation>();
+        for (String[] bt:book_time){
+            int startTime = calculateTime(bt[0]);
+            int endTime = calculateTime(bt[1]);
+            list.add(new Reservation(startTime, endTime));
         }
-        
-        // 입실 시간을 기준으로 정렬
-        Arrays.sort(times, (a, b) -> a[0] - b[0]);
-        
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        
-        for (int[] time : times) {
-            // 퇴실 시간이 가장 빠른 객실 확인
-            if (!pq.isEmpty() && pq.peek() <= time[0]) {
-                pq.poll();
+        Collections.sort(list);
+        PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
+        int cnt = 0;
+        for (Reservation r:list){
+            if (pq.isEmpty()){
+                pq.add(r.end + 10);
+                cnt++;
+            } 
+            else if (!pq.isEmpty() && pq.peek() > r.start){
+                pq.add(r.end+10);
+                cnt++;
             }
-            
-            // 현재 객실의 퇴실 시간 + 10분을 pq에 추가
-            pq.offer(time[1] + 10);
+            else {
+                pq.poll();
+                pq.add(r.end+10);
+            }
         }
-        
-        return pq.size();
+        return cnt;
     }
 }
