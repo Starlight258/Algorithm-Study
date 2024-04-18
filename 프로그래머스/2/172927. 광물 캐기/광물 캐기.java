@@ -32,14 +32,6 @@ class Solution {
             }
             return b[0] - a[0];
         });
-        // 곡괭이 고르기
-        int pickPos = 0;
-        for (int i=0;i<picks.length;i++){
-            if (picks[i]>0){
-                pickPos = i;
-                break;
-            } 
-        }
         for (int[] minCnt:mineralCnt){
             for (int i=0;i<3;i++){
                 if (picks[i]>0){
