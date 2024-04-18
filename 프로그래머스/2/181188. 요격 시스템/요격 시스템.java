@@ -8,12 +8,10 @@ class Solution {
             }
         });
         int cnt = 1;
-        int nowStart = targets[0][0];
         int nowEnd = targets[0][1];
         for (int[] target: targets){
             if (nowEnd <= target[0]){
                 cnt++;
-                nowStart = target[0];
                 nowEnd = target[1];
             }
         }
