@@ -22,23 +22,20 @@ class Solution {
             x = here.x;
             if (y==goalY && x==goalX) break;
             for (int i=0;i<4;i++){
-                int ny = y;
-                int nx = x;
+                int nextY = y;
+                int nextX = x;
                 while (true){
-                    int nextY = ny + dy[i];
-                    int nextX = nx + dx[i];
-                    if (nextY<0||nextX<0||nextY>=mp.length||nextX>=mp[0].length){
+                    nextY += dy[i];
+                    nextX += dx[i];
+                    if (nextY<0||nextX<0||nextY>=mp.length||nextX>=mp[0].length||mp[nextY][nextX]==1){
+                        nextY -= dy[i];
+                        nextX -= dx[i];
                         break;
                     } 
-                    if (mp[nextY][nextX]==1){
-                        break;
-                    } 
-                    ny = nextY;
-                    nx = nextX;
                 }
-                if (visited[ny][nx]==0){
-                    queue.offer(new Node(ny, nx));
-                    visited[ny][nx] = visited[y][x]+1;
+                if (visited[nextY][nextX]==0){
+                    queue.offer(new Node(nextY, nextX));
+                    visited[nextY][nextX] = visited[y][x]+1;
                 }
             }
         }
