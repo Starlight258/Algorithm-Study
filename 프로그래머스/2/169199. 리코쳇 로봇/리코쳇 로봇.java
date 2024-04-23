@@ -21,8 +21,6 @@ class Solution {
             y = here.y;
             x = here.x;
             if (y==goalY && x==goalX) break;
-            int fy = y;
-            int fx = x;
             for (int i=0;i<4;i++){
                 int ny = y;
                 int nx = x;
