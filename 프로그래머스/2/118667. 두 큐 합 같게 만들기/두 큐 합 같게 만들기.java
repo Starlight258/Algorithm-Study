@@ -2,41 +2,33 @@ import java.util.*;
 class Solution {
     public int solution(int[] queue1, int[] queue2) {
         int answer = 0;
-        long sum = 0;
-        long sum1=0; 
-        int n = queue1.length;
-        Queue<Integer> q1 = new LinkedList<Integer>();
-        Queue<Integer> q2 = new LinkedList<Integer>();
-        for (int i=0;i<n;i++){
+        long sum1=0, sum2=0;
+        Queue<Integer> q1 = new LinkedList<>();
+        Queue<Integer> q2 = new LinkedList<>();
+        for (int i=0;i<queue1.length;i++){
+            sum1 += queue1[i];
+            sum2 += queue2[i];
             q1.offer(queue1[i]);
             q2.offer(queue2[i]);
-            sum += queue1[i] + queue2[i];
-            sum1 += queue1[i];
         }
-        
-        long sum2 = sum-sum1;
-        if (sum%2==1) return -1;
-        sum /= 2; // 각각 만족해야하는 sum
-        
-        while (sum1 != sum || sum2!=sum){
-            if (answer>n*3) return -1;
-            if (sum1>sum){
-                int e1 = q1.poll();
-                q2.offer(e1);
-                sum1 = sum1 - e1;
-                sum2 = sum2 + e1;
-                answer++;
+        long goalSum = (sum1 + sum2) / 2;
+        if ((long)(sum1 + sum2)%2==1) return -1;
+        if (goalSum==sum1) return 0;
+        System.out.println(queue1.length);
+        while (true){
+            answer++;
+            if (answer>=3*queue1.length) return -1;
+            if (sum1>goalSum){
+                int e = q1.poll();
+                sum1 -= e;
+                q2.offer(e);
+            } else{
+                int e = q2.poll();
+                q1.offer(e);
+                sum1 += e;
             }
-            else{
-                 int e2 = q2.poll();
-                 q1.offer(e2);
-                 sum2 = sum2 - e2;
-                 sum1 = sum1 + e2;
-                answer++;
-            }
-            if (sum1 == sum2) break;
+            if (sum1==goalSum) break;
         }
-        
         return answer;
     }
 }
