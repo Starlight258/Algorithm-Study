@@ -20,12 +20,12 @@ public class Main {
 
         while (left<right){
             int sum = number[left] + number[right];
-            if (Math.abs(sum) < Math.abs(answer)){
-                answer = sum;
+            if (Math.abs(sum) < answer){
+                answer = Math.abs(sum);
                 pair[0] = number[left];
                 pair[1] = number[right];
             }
-
+            if (sum==0) break;
             if (sum < 0){
                 left++;
             } else right--;
