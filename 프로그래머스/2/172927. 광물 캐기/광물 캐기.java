@@ -1,49 +1,55 @@
 import java.util.*;
 class Solution {
     public int solution(int[] picks, String[] minerals) {
-        int answer = 0;
-         int[][] fatigue = {
+        int[][] fatigue = {
             {1,1,1},
             {5,1,1},
             {25,5,1}
         };
-        //1. 광물 5개씩 자르기
-        int[][] mineralCnt = new int[(minerals.length+4)/5][3];
-        int available = picks[0]*5+picks[1]*5+picks[2]*5;
-        
-        for (int i=0;i<Math.min(available, minerals.length);i++){
-            switch (minerals[i]){
-                case "diamond":
-                    mineralCnt[i/5][0]++;
-                    break;
-                case "iron":
-                    mineralCnt[i/5][1]++;
-                    break;
-                case "stone":
-                    mineralCnt[i/5][2]++;
-                    break;
+        int pickNum = 0;
+        for(int i=0;i<picks.length;i++){
+            pickNum += picks[i];
+        }
+        // 1. 5개씩 쪼개기
+        int n = Math.min(pickNum*5, minerals.length);
+        int[][] mineralDivision = new int[n/5+1][3];
+        for (int i=0;i<n;i++){
+            if (minerals[i].equals("diamond")){
+                mineralDivision[i/5][0]++;
+            }
+            if (minerals[i].equals("iron")){
+                mineralDivision[i/5][1]++;
+            }
+            if (minerals[i].equals("stone")){
+                mineralDivision[i/5][2]++;
             }
         }
-        Arrays.sort(mineralCnt, (a, b) -> {
-            if (a[0] == b[0] && a[1] == b[1]){
-                return b[2] - a[2]; 
-            } else if (a[0] == b[0]){
-                return b[1] - a[1];
-            }
-            return b[0] - a[0];
-        });
-        for (int[] minCnt:mineralCnt){
-            for (int i=0;i<3;i++){
-                if (picks[i]>0){
-                    answer += minCnt[0]*fatigue[i][0];
-                    answer += minCnt[1]*fatigue[i][1];
-                    answer += minCnt[2]*fatigue[i][2];
-                    picks[i]--;
-                    break;
+        // 2. 정렬하기
+        Arrays.sort(mineralDivision, new Comparator<int[]>(){
+            public int compare(int[] o1, int[] o2){
+                if (o1[0]==o2[0]){
+                    if (o1[1]==o2[1]){
+                        return o2[2] - o1[2];
+                    }
+                    return o2[1]-o1[1];
                 }
+                return o2[0] - o1[0];
+            }
+        });
+        
+        //3. 피로도 구하기
+        int totalFatigue = 0;
+        int pos = 0;
+        for (int i=0;i<picks.length;i++){
+            while (picks[i]>0 && pos<n/5+1){
+                totalFatigue += fatigue[i][0] * mineralDivision[pos][0];
+                totalFatigue += fatigue[i][1] * mineralDivision[pos][1];
+                totalFatigue += fatigue[i][2] * mineralDivision[pos][2];
+                picks[i]--;
+                pos++;
             }
         }
-     
-        return answer;
+        
+        return totalFatigue;
     }
 }
