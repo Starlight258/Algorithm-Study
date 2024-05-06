@@ -2,87 +2,65 @@ import java.util.*;
 class Solution {
     public int[] solution(String[] info, String[] query) {
         int[] answer = new int[query.length];
-        // int[] score = new int[info.length];
         
-        Map<String, List<Integer>> map = new HashMap<>();
-        // info 데이터 처리
-        for (String i : info) {
-            String[] split = i.split(" ");
-            String key = String.join("", split[0], split[1], split[2], split[3]);
+        // 해당 info에 대해 가능한 모든 조건에 점수 저장
+        Map<String, List<Integer>> infoMap = new HashMap<>();
+        for (int i=0;i<info.length;i++){
+            String[] split = info[i].split(" ");
+            String lang = split[0], part = split[1], career = split[2], food = split[3];
             int score = Integer.parseInt(split[4]);
-
-            map.computeIfAbsent(key, k -> new ArrayList<>()).add(score);
+            
+            for (int a=0;a<2;a++){
+                for (int b=0;b<2;b++){
+                    for (int c=0;c<2;c++){
+                        for (int d=0;d<2;d++){
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(a == 0 ? "-" : lang);
+                            sb.append(b == 0 ? "-" : part);
+                            sb.append(c == 0 ? "-" : career);
+                            sb.append(d == 0 ? "-" : food);
+                            String key = sb.toString();
+                            infoMap.computeIfAbsent(key, k-> new ArrayList<>()).add(score);
+                         }
+                    }
+                }
+            }
         }
-
-        // 리스트 정렬
-        for (Map.Entry<String, List<Integer>> l:map.entrySet()){
-            System.out.println(l.getKey() + l.getValue());
+        
+        // 점수 정렬 (이진탐색을 위함)
+        for (List<Integer> list:infoMap.values()){
+            Collections.sort(list);
         }
         
+        // 쿼리 조건 저장
+        String[] querySplit = new String[query.length];
+        int[] queryScore = new int[query.length];
         
+        for (int i=0;i<query.length;i++){            
+            String[] sq = query[i].split(" and ");
+            String key = String.join("", sq[0], sq[1], sq[2]);
+            String[] subCond = sq[3].split(" ");
+            key += subCond[0];
+            querySplit[i] = key;
+            queryScore[i] = Integer.parseInt(subCond[1]);
+        }
         
-//         // 조건 저장
-//         HashMap<String, ArrayList<Integer>> hm = new HashMap<>();
-//         for (int i=0;i<info.length;i++){
-//             String[] splitedInfo = info[i].split(" ");
-//             String lang = splitedInfo[0];
-//             String part = splitedInfo[1];
-//             String career = splitedInfo[2];
-//             String food = splitedInfo[3];
-//             score[i] = Integer.parseInt(splitedInfo[4]);
-//             for (int a=0;a<2;a++){
-//                 for (int b=0;b<2;b++){
-//                     for (int c=0;c<2;c++){
-//                         for (int d=0;d<2;d++){
-//                             if (a==0) lang = "-";
-//                             if (b==0) part = "-";
-//                             if (c==0) career = "-";
-//                             if (d==0) food = "-";
-//                             String key = lang + " " + part +" " + career +" " + food;
-//                             ArrayList<Integer> list = hm.getOrDefault(key, new ArrayList<>());
-//                             list.add(score[i]);
-//                             hm.put(key, list);
-                            
-//                             lang = splitedInfo[0];
-//                             part = splitedInfo[1];
-//                             career = splitedInfo[2];
-//                             food = splitedInfo[3];
-//                          }
-//                     }
-//                 }
-//             }
-//         }
-        
-//         for (Map.Entry<String, ArrayList<Integer>> l:hm.entrySet()){
-//             Collections.sort(l.getValue());
-//         }
-        
-//         String[] querySplit = new String[query.length];
-//         int[] queryScore = new int[query.length];
-//         for (int i=0;i<query.length;i++){            
-//             String[] sq = query[i].split(" and ");
-//             String[] subCond = sq[3].split(" ");
-//             querySplit[i] ="";
-//             for (int j=0;j<3;j++){
-//                 querySplit[i] += sq[j] +" ";
-//             }
-//             querySplit[i] += subCond[0];
-//             queryScore[i] = Integer.parseInt(subCond[1]);
-//         }
-        
-//         for (int i=0;i<query.length;i++){
-//             ArrayList<Integer> list = hm.get(querySplit[i]);
-//             int left = 0;
-//             int right = list.size();
-//             while (left<right){
-//                 int mid = (left + right) / 2;
-//                 if (list.get(mid) >= queryScore[i]){
-//                     right = mid;
-//                 } else left = mid + 1;
-//             }
-//             answer[i] = list.size() - left;
-//         }
-    
+        // 조건에 해당하는 점수 리스트에 대해 이진 탐색 수행
+        for (int i=0;i<query.length;i++){
+            List<Integer> list = infoMap.getOrDefault(querySplit[i], new ArrayList<>());
+            
+            int left = 0;
+            int right = list.size();
+            
+            while (left<right){
+                int mid = (left + right) / 2;
+                if (list.get(mid) >= queryScore[i]){
+                    right = mid;
+                } else left = mid + 1;
+            }
+            
+            answer[i] = list.size() - left;
+        }
       
         return answer;
     }
