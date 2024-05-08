@@ -8,13 +8,12 @@ public class Main {
     static int answer;
     static ArrayList<Integer> list = new ArrayList<>();
     static void dfs(int row) {
-        // 가지치기
         if (row == n) {
             answer++;
             return;
         }
         for (int col = 0; col < n; col++) {
-            if (check(row, col)) {
+            if (check(col)) {
                 list.add(col);
                 dfs(row + 1);
                 list.remove(list.size() - 1);
@@ -22,13 +21,14 @@ public class Main {
         }
     }
 
-    static boolean check(int row, int col) {
+    static boolean check(int col) {
+        int row = list.size();
         for (int i = 0; i < list.size(); i++) {
             int c = list.get(i);
             if (c == col) {
                 return false;
             }
-            if (Math.abs(row - i) == Math.abs(col - c)) {
+            if (row - i == Math.abs(col - c)) {
                 return false;
             }
         }
