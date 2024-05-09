@@ -27,36 +27,28 @@ public class Main {
 
         makePrime(n);
 
-        //1. 누적합
-        int total = 0;
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i <= n; i++) {
             if (isPrime[i]) {
-                total += i;
-                list.add(total);
+                list.add(i);
             }
         }
 
         //2. 투포인터
         int answer = 0;
-
         int left = 0;
-        int right = 1;
-        while (right < list.size() && left < right) {
-            int rangeSum = list.get(right) - list.get(left);
-            if (rangeSum < n) {
-                right++;
-            } else {
-                if (rangeSum == n) {
-                    answer++;
-                }
-                left++;
-            }
-        }
-        for (Integer integer : list) {
-            if (integer == n) {
-                answer++;
+        int right = 0;
+        int rangeSum = 0;
+        while (true) {
+            if (rangeSum >= n) {
+                rangeSum -= list.get(left++);
+            } else if (right == list.size()) {
                 break;
+            } else {
+                rangeSum += list.get(right++);
+            }
+            if (rangeSum == n) {
+                answer++;
             }
         }
 
