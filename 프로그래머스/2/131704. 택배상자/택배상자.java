@@ -2,34 +2,16 @@ import java.util.*;
 class Solution {
     public int solution(int[] order) {
         int answer = 0;
-        if (order.length==1){
-            return 1;
-        }
+        int pos=0;
         Stack<Integer> stk = new Stack<>();
-        int next = 1;
+        
         for (int i=0;i<order.length;i++){
-            if (order[i] == next && next<=order.length){
-                next++;
+            stk.push(i+1);
+            while (!stk.isEmpty() && stk.peek()==order[pos]){
                 answer++;
-                continue;
-            }
-            if (!stk.isEmpty() && order[i] == stk.peek()){
                 stk.pop();
-                answer++;
-                continue;
+                pos++;
             }
-            if (next>order.length) continue;
-            boolean flag = false;
-            for (int j=next;j<=order.length;j++){
-                next++;
-                if (j==order[i]){
-                    answer++;
-                    flag = true;
-                    break;
-                } 
-                stk.push(j);
-            }
-            if (!flag) break; 
         }
         return answer;
     }
