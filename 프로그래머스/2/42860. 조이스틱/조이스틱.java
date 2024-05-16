@@ -4,6 +4,7 @@ public class Solution {
         int minMove = name.length() - 1;
 
         for (int cursor = 0; cursor < name.length(); cursor++) {
+            
             int nextCursor = cursor + 1;
 
             while (nextCursor < name.length() && name.charAt(nextCursor) == 'A') {
