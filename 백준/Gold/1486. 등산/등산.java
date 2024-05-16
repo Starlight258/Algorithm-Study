@@ -76,26 +76,25 @@ public class Main {
     }
 
     private static void XYcompression() {
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < M; y++) {
-
+        for (int y = 0; y < N; y++) {
+            for (int x = 0; x < M; x++) {
                 for (int d = 0; d < 4; d++) {
-                    int nx = x + dx[d];
                     int ny = y + dy[d];
+                    int nx = x + dx[d];
 
-                    if (nx >= 0 && ny >= 0 && nx < N && ny < M) {
-                        int here = map[x][y], there = map[nx][ny], gap = Math.abs(here - there);
+                    if (nx >= 0 && ny >= 0 && nx < M && ny < N) {
+                        int here = map[y][x], there = map[ny][nx], gap = Math.abs(here - there);
                         if (gap <= T) {
                             if (here >= there) {
-                                list[0][x * M + y].add(new Node(nx * M + ny, 1));
+                                list[0][y * M + x].add(new Node(ny * M + nx, 1));
                             } else {
-                                list[0][x * M + y].add(new Node(nx * M + ny, gap * gap));
+                                list[0][y * M + x].add(new Node(ny * M + nx, gap * gap));
                             }
 
                             if (here > there) {
-                                list[1][x * M + y].add(new Node(nx * M + ny, gap * gap));
+                                list[1][y * M + x].add(new Node(ny * M + nx, gap * gap));
                             } else {
-                                list[1][x * M + y].add(new Node(nx * M + ny, 1));
+                                list[1][y * M + x].add(new Node(ny * M + nx, 1));
                             }
                         }
                     }
