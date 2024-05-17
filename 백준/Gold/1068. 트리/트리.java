@@ -7,23 +7,25 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int start, eraseNode;
-    static List<List<Integer>> list;
+    static int eraseNode;
+    static List<List<Integer>> graph;
     static int answer;
 
-    static void dfs(int parent, int start){
-        if (start == eraseNode) {
-            if (list.get(parent).size() == 1) {
+    static void dfs(int parent, int current){
+        if (current == eraseNode) {
+            if (graph.get(parent).size() == 1) {
                 answer++;
             }
             return;
         }
-        if (list.get(start).size() == 0) {
+        
+        if (graph.get(current).size() == 0) {
             answer++;
             return;
         }
-        for (Integer node : list.get(start)) {
-            dfs(start, node);
+        
+        for (Integer adjNode : graph.get(current)) {
+            dfs(current, adjNode);
         }
     }
 
@@ -31,24 +33,25 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
 
-        start = 0;
-        list = new ArrayList<>();
+        int root = 0;
+        graph = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            list.add(new ArrayList<>());
+            graph.add(new ArrayList<>());
         }
 
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
             int input = Integer.parseInt(st.nextToken());
             if (input == -1) {
-                start = i;
+                root = i;
                 continue;
             }
-            list.get(input).add(i);
+            graph.get(input).add(i);
         }
+        
         eraseNode = Integer.parseInt(br.readLine());
 
-        dfs(start, start);
+        dfs(root, root);
 
         System.out.println(answer);
     }
