@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
@@ -25,13 +26,16 @@ public class Main {
         int n = Integer.parseInt(br.readLine());
         Lecture[] lectures = new Lecture[n];
 
-        int maxDay = 0;
         for (int i = 0; i < lectures.length; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
             int pay = Integer.parseInt(st.nextToken());
             int day = Integer.parseInt(st.nextToken());
             lectures[i] = new Lecture(pay, day);
-            maxDay = Math.max(maxDay, day);
+        }
+
+        if (n == 0) {
+            System.out.println(0);
+            return;
         }
 
         Arrays.sort(lectures);
@@ -39,19 +43,13 @@ public class Main {
         // 2. 강연하기
         int answer = 0;
         int pos = 0;
-        PriorityQueue<Lecture> pq = new PriorityQueue<>((l1, l2) -> Integer.compare(l2.pay, l1.pay));
-        for (int i = maxDay; i > 0; i--) {
-            while (pos < lectures.length) {
-                if (lectures[pos].day == i) {
-                    pq.offer(lectures[pos]);
-                }
-                else if (lectures[pos].day < i) {
-                    break;
-                }
-                pos++;
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        for (int i = lectures[0].day; i > 0; i--) {
+            while (pos < lectures.length && lectures[pos].day == i) {
+                    pq.offer(lectures[pos++].pay);
             }
-            if (!pq.isEmpty() && pq.peek().day >= i) {
-                answer += pq.poll().pay;
+            if (!pq.isEmpty()) {
+                answer += pq.poll();
             }
         }
 
