@@ -26,7 +26,6 @@ public class Main {
             return;
         }
 
-        a[depth] = ~a[depth];
         go(depth + 1);
         a[depth] = ~a[depth];
         go(depth + 1);
