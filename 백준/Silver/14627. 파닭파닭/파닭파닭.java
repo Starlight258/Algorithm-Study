@@ -16,19 +16,23 @@ public class Main {
             arr[i] = Integer.parseInt(br.readLine());
         }
 
+        long sum = 0;
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+        }
+
         // 이진 탐색 수행
         long left = 1;
-        long right = 1000000000;
+        long right = 1_000_000_000;
+        long answer = 0;
         long answerMid = 0;
-        long answer = 0;;
 
         while (left <= right) {
             long mid = (left + right) / 2;
+
             long cnt = 0;
             for (int a : arr) {
-                if (a >= mid) {
-                    cnt += a / mid;
-                }
+                cnt += a / mid;
             }
 
             if (cnt < c) {
@@ -40,18 +44,7 @@ public class Main {
         }
 
         // 남은 파 구하기
-        long remainChicken = c;
-        for (int a : arr) {
-            if (remainChicken >= 0) {
-                if (a >= answerMid) {
-                    while (a >= answerMid && remainChicken > 0) {
-                        a -= answerMid;
-                        remainChicken--;
-                    }
-                }
-            }
-            answer += a;
-        }
+        answer = sum - answerMid * c;
 
         // 정답 출력
         System.out.println(answer);
