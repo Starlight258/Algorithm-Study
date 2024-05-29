@@ -51,7 +51,7 @@ class Solution {
             if (visited[i]) continue;
             
             visited[i] = true;
-            dfs(visited, i, depth+1, limit, relation); 
+            dfs(visited, i+1, depth+1, limit, relation); 
             visited[i] = false;
         }
     }
