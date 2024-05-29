@@ -34,8 +34,8 @@ class Solution {
             // 최소성 검사하기
             for (String c:candi){
                 int count = 0;
-                for (int i=0;i<key.length();i++){
-                    String subKey = String.valueOf(key.charAt(i));
+                for (int i=0;i<list.size();i++){
+                    String subKey = String.valueOf(list.get(i));
                     if (c.contains(subKey)){
                         count++;
                     }
