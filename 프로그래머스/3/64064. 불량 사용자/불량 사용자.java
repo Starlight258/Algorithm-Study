@@ -1,17 +1,14 @@
 import java.util.*;
 class Solution {
-    Set<List<Integer>> answers = new HashSet<>();
+    Set<String> answers = new HashSet<>();
     
     boolean check(String ban, String user){
         if (ban.length() != user.length()) return false;
         
-        int pos = -1;
-        for (char b:ban.toCharArray()){
-            pos++;
-            if (b == '*'){
-                continue;
+        for (int i=0;i<ban.length();i++){
+            if (ban.charAt(i)!='*' && ban.charAt(i)!=user.charAt(i)) {
+                return false;
             }
-            if (b != user.charAt(pos)) return false;
         }
         return true;
     }
@@ -19,17 +16,19 @@ class Solution {
     void dfs(int depth, List<List<Integer>> indexes, List<Integer> result, boolean[] visited){
         if (depth == indexes.size()){
             Collections.sort(result);
-            if (!answers.contains(result)) answers.add(new ArrayList<>(result));
+            String key = result.toString();
+            if (!answers.contains(result)) answers.add(key);
             return;
         }
-        for (int i=0;i<indexes.get(depth).size();i++){
-            if (visited[indexes.get(depth).get(i)]) continue;
+        
+        for (int idx: indexes.get(depth)){
+            if (visited[idx]) continue;
             
-            visited[indexes.get(depth).get(i)] = true;
-            result.add(indexes.get(depth).get(i));
+            visited[idx] = true;
+            result.add(idx);
             dfs(depth+1, indexes, result, visited);
-            result.remove(indexes.get(depth).get(i));
-            visited[indexes.get(depth).get(i)] = false;
+            result.remove(Integer.valueOf(idx));
+            visited[idx] = false;
         }
     }
     
@@ -37,15 +36,13 @@ class Solution {
         // 1.패턴 매칭 문자열 인덱스 저장
         List<List<Integer>> indexes = new ArrayList<>();
         for (int i=0;i<banned_id.length;i++){
-            indexes.add(new ArrayList<Integer>());
-        }
-        
-        for (int i=0;i<banned_id.length;i++){
+            List<Integer> idx = new ArrayList<>();
             for (int j=0;j<user_id.length;j++){
                 if (check(banned_id[i], user_id[j])){
-                    indexes.get(i).add(j);
+                    idx.add(j);
                 }
             }
+            indexes.add(idx);
         }
         
         //2. 완전탐색
