@@ -22,16 +22,16 @@ public class Main {
 
             for (int i = 1; i <= 6; i++) {
                 int next = cur + i;
-                if (next > 100 || visited[next] != 0) {
+                if (next > 100) {
                     continue;
                 }
 
-                visited[next] = visited[cur] + 1;
-                while (map[next] != 0 && visited[map[next]] == 0) {
+                while (map[next] != 0) {
                     next = map[next];
-                    visited[next] = visited[cur] + 1;
                 }
-                if (map[next] == 0) {
+
+                if (visited[next] == 0) {
+                    visited[next] = visited[cur] + 1;
                     q.add(next);
                 }
 
