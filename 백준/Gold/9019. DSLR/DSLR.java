@@ -9,14 +9,15 @@ import java.util.StringTokenizer;
 public class Main {
 
     static final String[] COMMAND = {"D", "S", "L", "R"};
+    
     static Queue<Integer> q;
     static String[] command;
     static boolean[] visited;
 
     static String bfs(int a, int b) {
         q = new LinkedList<>();
-        command = new String[10000];
-        visited = new boolean[10000];
+        command = new String[10001];
+        visited = new boolean[10001];
         Arrays.fill(command, "");
 
         q.add(a);
@@ -42,14 +43,13 @@ public class Main {
                         nextNum = (curNum % 10) * 1000 + curNum / 10;
                         break;
                 }
-                if (!visited[nextNum]) {
-                    visited[nextNum] = true;
-                    q.add(nextNum);
-                    command[nextNum] = command[curNum] + COMMAND[i];
-                }
-
                 if (curNum == b) {
                     return command[b];
+                }
+                if (!visited[nextNum]) {
+                    q.add(nextNum);
+                    command[nextNum] = command[curNum] + COMMAND[i];
+                    visited[nextNum] = true;
                 }
             }
         }
