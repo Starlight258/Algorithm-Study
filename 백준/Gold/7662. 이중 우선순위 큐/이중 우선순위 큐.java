@@ -1,71 +1,83 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	
-	static Map<Integer, Integer> map;
 
-	public static void main(String[] args) throws IOException{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringBuilder sb = new StringBuilder();
-		int t = Integer.parseInt(br.readLine());
-		for(int test=0; test<t; test++) {
-			int input = Integer.parseInt(br.readLine());
-			
-			Queue<Integer> min = new PriorityQueue<>();
-			Queue<Integer> max = new PriorityQueue<>(Collections.reverseOrder()); // 내림차순 
-			map = new HashMap<>();
-			for(int i=0; i<input; i++) {
-				StringTokenizer st = new StringTokenizer(br.readLine());
-				String op = st.nextToken();
-				
-				if(op.equals("I")) {
-					int num = Integer.parseInt(st.nextToken());
-					max.add(num);
-					min.add(num);
-					map.put(num, map.getOrDefault(num, 0)+1);
-				}else {
-					int type = Integer.parseInt(st.nextToken());
-					
-					if(map.size()==0) continue;
-					if(type == 1) { //최댓값 삭제 
-						delete(max);
-					}else { // 최솟값 삭제
-						delete(min);
-					}
-				}
-			}
-			
-			if (map.size()==0) {
-	            sb.append("EMPTY\n");
-	        } else {
-	        	int res = delete(max);
-	        	sb.append(res+" "); // 최댓값 
-	        	if(map.size()>0) res = delete(min);
-	        	sb.append(res+"\n"); // 최솟값
-	        }
-		}
-		System.out.println(sb.toString());
-	}
-	
-	static int delete(Queue<Integer> q) {
-		int res = 0;
-		while(true) {
-			res = q.poll();
-			
-			int cnt = map.getOrDefault(res, 0);
-			if(cnt ==0) continue;
-			
-			if(cnt ==1) map.remove(res);
-			else map.put(res, cnt-1);
-			break;
-		}
-		
-		return res;
-	}
+    static Map<Integer, Integer> map;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int t = Integer.parseInt(br.readLine());
+
+        StringTokenizer st;
+        PriorityQueue<Integer> minPQ = new PriorityQueue<>();
+        PriorityQueue<Integer> maxPQ = new PriorityQueue<>(Collections.reverseOrder());
+        map = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+        while (t-- > 0) {
+            int k = Integer.parseInt(br.readLine());
+            for (int i = 0; i < k; i++) {
+                st = new StringTokenizer(br.readLine());
+                String cmd = st.nextToken();
+                int num = Integer.parseInt(st.nextToken());
+
+                switch (cmd) {
+                    case "I":
+                        minPQ.offer(num);
+                        maxPQ.offer(num);
+                        map.put(num, map.getOrDefault(num, 0) + 1);
+                        break;
+                    case "D":
+                        if (map.size() == 0) {
+                            continue;
+                        }
+                        if (num == 1) {
+                            delete(maxPQ);
+                        } else {
+                            delete(minPQ);
+                        }
+                        break;
+                }
+            }
+            if (map.size() == 0) {
+                sb.append("EMPTY\n");
+                continue;
+            }
+            int result = delete(maxPQ);
+            sb.append(result + " ");
+            if (map.size() > 0) {
+                result = delete(minPQ);
+            }
+            sb.append(result + "\n");
+
+            minPQ.clear();
+            maxPQ.clear();
+            map.clear();
+        }
+        System.out.println(sb);
+    }
+
+    private static int delete(PriorityQueue<Integer> pq) {
+        int num = 0;
+        while (true) {
+            num = pq.poll();
+            int cnt = map.getOrDefault(num, 0);
+            if (cnt == 0) {
+                continue;
+            }
+            if (cnt == 1) {
+                map.remove(num);
+            } else {
+                map.put(num, cnt - 1);
+            }
+            break;
+        }
+        return num;
+    }
 }
