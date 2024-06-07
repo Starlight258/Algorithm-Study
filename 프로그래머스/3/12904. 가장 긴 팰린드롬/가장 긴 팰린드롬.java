@@ -19,12 +19,10 @@ class Solution
     }
     
     public int compare(String s, int left, int right){
-        int result = 1;
         while (left>=0 && right<s.length() && s.charAt(left)==s.charAt(right)){
-            result = Math.max(result, right-left+1);
             left--;
             right++;
         }
-        return result;
+         return right - left - 1;
     }
 }
