@@ -10,7 +10,7 @@ public class Main {
         }
         long temp = pow(a, b / 2, c);
         if (b % 2 == 1) {
-            return (temp * temp) % c * a % c;
+            return (temp % c * temp % c) % c * a % c;
         }
         return temp * temp % c;
     }
