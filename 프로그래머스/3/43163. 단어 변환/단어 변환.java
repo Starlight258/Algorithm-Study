@@ -1,35 +1,47 @@
+import java.util.*;
 class Solution {
-    boolean[] visited = new boolean[54];
-    boolean checkOne(String a, String b){
+    public boolean checkWord(String s1, String s2){
         int cnt = 0;
-        for (int i=0;i<a.length();i++){
-            if (a.charAt(i) != b.charAt(i)) cnt++;
-            if (cnt>1) return false;
+        for (int i=0;i<s1.length();i++){
+            if (s1.charAt(i) != s2.charAt(i)) cnt++;
+            if (cnt>1) return false; 
         }
         return true;
     }
-    int dfs(int changeCnt, int now, String target, String[] words){
-        visited[now] = true;
-        int returnValue = Integer.MAX_VALUE;
-        if (target.equals(words[now])) return changeCnt;
-        if (changeCnt>= words.length) return 0;
-        for (int i=0;i<words.length;i++){
-            if (!visited[i] && checkOne(words[i], words[now])){
-                visited[i] = true;
-                int value = dfs(changeCnt+1, i, target, words);
-                returnValue = Math.min(returnValue, value);
-                visited[i] = false;
-            }
-        }
-        return returnValue;
-    }
     public int solution(String begin, String target, String[] words) {
-        int answer = Integer.MAX_VALUE;
+        int answer = 0;
+        
+        // bfs 수행
+        Queue<Integer> q = new LinkedList<>();
+        int[] visited = new int[words.length];
+        Arrays.fill(visited, 0);
+        int targetIdx = -1;
         for (int i=0;i<words.length;i++){
-            if (checkOne(begin, words[i])){
-                answer = Math.min(answer, dfs(1, i, target, words));
+            if (checkWord(words[i], begin)){
+                q.add(i);
+                visited[i] = 1;
+            }
+            if (words[i].equals(target)){
+                targetIdx = i;
             }
         }
-        return answer;
+        if (targetIdx<0) return 0;
+        
+        
+        while (!q.isEmpty()){
+            int cur = q.poll();
+            
+            if (cur==targetIdx) break;
+            for (int i=0;i<words.length;i++){
+                if (i==cur) continue;
+                if (visited[i]==0 && checkWord(words[i], words[cur])){
+                    q.add(i);
+                    visited[i] = visited[cur]+1;
+                }
+            }
+        }
+        
+        // 정답        
+        return visited[targetIdx];
     }
 }
