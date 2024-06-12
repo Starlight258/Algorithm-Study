@@ -2,19 +2,19 @@ import java.util.*;
 class Solution {
     public String solution(String number, int k) {
         StringBuilder answer = new StringBuilder();
-        Stack<Character> stk= new Stack<>();
-        int cnt = k;
-        for (char n:number.toCharArray()){
-            while (!stk.isEmpty() && n > stk.peek() && k>0){
+        Stack<Character> stk = new Stack<>();
+        int count = k;
+        for (int i=0;i<number.length();i++){
+            char c = number.charAt(i);
+            while (count>0 && !stk.isEmpty() && c>stk.peek()){
                 stk.pop();
-                k--;
+                count--;
             }
-            stk.push(n);
+            stk.push(c);
         }
-        for (int i=0;i<number.length()-cnt;i++){
-            answer.append(stk.get(i));
+        while (!stk.isEmpty()){
+            answer.append(stk.pop());
         }
-       
-        return answer.toString();
+        return answer.reverse().toString().substring(0, number.length()-k);
     }
 }
