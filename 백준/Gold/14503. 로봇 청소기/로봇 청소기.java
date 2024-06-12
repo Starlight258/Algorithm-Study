@@ -53,10 +53,9 @@ public class Main {
             rotate();
             int ny = r + dy[d];
             int nx = c + dx[d];
-            if (ny < 0 || ny >= n || nx < 0 || nx >= m) {
+            if (ny < 0 || nx < 0 || ny >= n || nx >= m) {
                 continue;
             }
-            // 청소되지 않은 빈칸이 있는 경우
             if (map[ny][nx] == 0) {
                 r = ny;
                 c = nx;
@@ -64,25 +63,20 @@ public class Main {
                 return;
             }
         }
-        // 청소되지 않은 빈칸이 없는 경우
-        if (moveBack()) {
-            clean();
-        }
+        goBack();
     }
 
-
-    private static boolean moveBack() {
+    private static void goBack() {
         int ny = r - dy[d];
         int nx = c - dx[d];
-        if (ny < 0 || ny >= n || nx < 0 || nx >= m) {
-            return false;
+        if (ny < 0 || nx < 0 || ny >= n || nx >= m) {
+            return;
         }
         if (map[ny][nx] != 1) {
             r = ny;
             c = nx;
-            return true;
+            clean();
         }
-        return false;
     }
 
     private static void rotate() {
