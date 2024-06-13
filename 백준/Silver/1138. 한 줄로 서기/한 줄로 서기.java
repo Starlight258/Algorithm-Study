@@ -1,7 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -15,13 +16,9 @@ public class Main {
             arr[i] = Integer.parseInt(st.nextToken());
         }
         //2. 줄 서기
-        LinkedList<Integer> line = new LinkedList<>();
+        List<Integer> line = new ArrayList<>();
         for (int i = arr.length - 1; i >= 0; i--) {
-            if (arr[i] == 0) {
-                line.addFirst(i + 1);
-            } else {
-                line.add(arr[i], i + 1);
-            }
+            line.add(arr[i], i + 1);
         }
         for (Integer integer : line) {
             System.out.print(integer + " ");
