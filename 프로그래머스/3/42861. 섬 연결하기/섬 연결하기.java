@@ -1,6 +1,8 @@
 import java.util.*;
 class Solution {
-    class Node {
+    int[] parent;
+    
+    class Node implements Comparable<Node>{
         int x;
         int y;
         int cost;
@@ -9,10 +11,11 @@ class Solution {
             this.y = y;
             this.cost = cost;
         }
+        public int compareTo(Node n){
+            return Integer.compare(this.cost, n.cost);
+        }
     }
-    
-    int[] parent;
-    
+        
     public int solution(int n, int[][] costs) {
         int answer = 0;
         List<Node> list = new ArrayList<>();
@@ -20,7 +23,7 @@ class Solution {
             list.add(new Node(cost[0], cost[1], cost[2]));
         }
         // 비용 오름차순으로 정렬
-        Collections.sort(list, (n1, n2)-> Integer.compare(n1.cost, n2.cost));
+        Collections.sort(list);
         
         // 크루스칼
         parent = new int[n];
@@ -39,12 +42,12 @@ class Solution {
     
     public int find(int x){
         if (parent[x]==x) return x;
-        return find(parent[x]);
+        return parent[x] = find(parent[x]);
     }
     
     public void union(int x, int y){
-        x = find(x);
-        y = find(y);
+        x = parent[x];
+        y = parent[y];
         if (x>y) parent[x] = y;
         else parent[y] = x;
     }
