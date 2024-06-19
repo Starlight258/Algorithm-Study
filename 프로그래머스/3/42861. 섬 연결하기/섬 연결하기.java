@@ -1,46 +1,51 @@
 import java.util.*;
 class Solution {
-    int[] parent = new int[104];
-    class Node implements Comparable<Node>{
-        int nodeA;
-        int nodeB;
-        int dist;
-        Node(int nodeA, int nodeB, int dist){
-            this.nodeA = nodeA;
-            this.nodeB = nodeB;
-            this.dist = dist;
+    class Node {
+        int x;
+        int y;
+        int cost;
+        Node (int x, int y, int cost){
+            this.x = x;
+            this.y = y;
+            this.cost = cost;
         }
-        public int compareTo(Node n){
-            return this.dist - n.dist;
-        }
-        
     }
-    int findParent(int x){
-        if (x==parent[x]) return x;
-        return parent[x] = findParent(parent[x]);
-    }
-    void unionParent(int a, int b){
-        a = parent[a];
-        b = parent[b];
-        if (a<b) parent[b] = a;
-        else parent[a] = b;
-    }
+    
+    int[] parent;
+    
     public int solution(int n, int[][] costs) {
         int answer = 0;
-        ArrayList<Node> graph = new ArrayList<Node>();
-        for (int i=1;i<=n;i++) parent[i] = i;
-        for (int i=0;i<costs.length;i++){
-            graph.add(new Node(costs[i][0], costs[i][1], costs[i][2]));
+        List<Node> list = new ArrayList<>();
+        for (int[] cost:costs){
+            list.add(new Node(cost[0], cost[1], cost[2]));
         }
-        Collections.sort(graph);
-        for (int i=0;i<graph.size();i++){
-            int a =graph.get(i).nodeA;
-            int b = graph.get(i).nodeB;
-            if (findParent(a) != findParent(b)){
-                unionParent(a, b);
-                answer += graph.get(i).dist;
+        // 비용 오름차순으로 정렬
+        Collections.sort(list, (n1, n2)-> Integer.compare(n1.cost, n2.cost));
+        
+        // 크루스칼
+        parent = new int[n];
+        for (int i=0;i<n;i++){
+            parent[i] = i;
+        }
+        // find 후 사이클 없으면 union
+        for (Node node:list){
+            if (find(node.x) != find(node.y)){
+                union(node.x, node.y);
+                answer += node.cost;
             }
         }
         return answer;
+    }
+    
+    public int find(int x){
+        if (parent[x]==x) return x;
+        return find(parent[x]);
+    }
+    
+    public void union(int x, int y){
+        x = find(x);
+        y = find(y);
+        if (x>y) parent[x] = y;
+        else parent[y] = x;
     }
 }
