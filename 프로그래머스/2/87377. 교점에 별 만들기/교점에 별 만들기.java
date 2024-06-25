@@ -10,16 +10,16 @@ class Solution {
                 a = (long)line[i][0]; b = (long)line[i][1]; e = (long)line[i][2];
                 c = (long)line[j][0]; d = (long)line[j][1]; f = (long)line[j][2];
 
-                long xNumer = ((long)b * f - (long)e * d); // 분자
-                long Deno = ((long)a * d - (long)b * c); // 분모
+                double xNumer = (b * f - e * d); // 분자
+                double Deno = (a * d - b * c); // 분모
                 if (Deno==0) continue;
-                if (xNumer % Deno != 0) continue; 
-                long x = xNumer / Deno;
+                double x = xNumer / Deno;
+                if ((long)x != x) continue; 
                 
-                long yNumer = ((long)e * c - (long)a * f);
-                if (yNumer % Deno != 0) continue; 
-                long y = yNumer / Deno;
-                list.add(new long[]{x, y});
+                double yNumer = (e * c - a * f);
+                double y = yNumer / Deno;
+                if ((long)y != y) continue; 
+                list.add(new long[]{(long)x, (long)y});
             }
         }
         //2. y 최대 최소 x 최대 최소 구하기
