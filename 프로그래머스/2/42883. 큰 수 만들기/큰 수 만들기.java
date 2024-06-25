@@ -1,20 +1,19 @@
 import java.util.*;
 class Solution {
     public String solution(String number, int k) {
-        StringBuilder answer = new StringBuilder();
+        String answer = "";
+        int last = Integer.parseInt(String.valueOf(number.charAt(0)));
         Stack<Character> stk = new Stack<>();
-        int count = k;
-        for (int i=0;i<number.length();i++){
-            char c = number.charAt(i);
-            while (count>0 && !stk.isEmpty() && c>stk.peek()){
+        for (char c:number.toCharArray()){
+            while (!stk.isEmpty() && stk.peek()<c && k>0){
                 stk.pop();
-                count--;
+                k--;
             }
             stk.push(c);
         }
-        while (!stk.isEmpty()){
-            answer.append(stk.pop());
+        for (int i=0;i<stk.size()-k;i++){
+            answer += stk.get(i);
         }
-        return answer.reverse().toString().substring(0, number.length()-k);
+        return answer;
     }
 }
