@@ -1,18 +1,15 @@
 import java.util.*;
 class Solution {
-    boolean solution(String str) {
-        int depth = 0;
-        for (char s:str.toCharArray()){
-            if (s == '('){
-                depth++;
-            } else {
-                if (depth==0){
-                    return false;
-                }
-                depth--;
-            }
+    boolean solution(String s) {
+        Stack<Character> stk = new Stack<>();
+        for (Character c:s.toCharArray()){
+            if (c == '('){
+                stk.push('(');
+            } else if (!stk.isEmpty()){
+                stk.pop();
+            } else return false;
         }
-
-        return depth == 0;
+        if (!stk.isEmpty()) return false;
+        return true;
     }
 }
