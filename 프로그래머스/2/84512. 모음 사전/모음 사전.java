@@ -1,33 +1,23 @@
 class Solution {
-    char[] w = {'A', 'E', 'I', 'O', 'U'};
-    int cnt = 0;
-    boolean exitFlag = false;
-    public int dfs(StringBuilder makingWord, String word){
-        if (makingWord.toString().equals(word)){
-            exitFlag = true;
-            return cnt;
+    char[] wordArray= {'A', 'E', 'I', 'O', 'U'};
+    int count = 0;
+    boolean flag = false;
+    int dfs(StringBuilder word, int depth, String target){
+        if (depth>5) return -1; 
+        if (word.toString().equals(target)){
+            flag = true;
+            return count;
         } 
-        
-        if (makingWord.length() > 5) {
-            return -1;
+        count++;
+        for (int i=0;i<5 && !flag;i++){
+            dfs(word.append(wordArray[i]), depth+1, target);
+            word.deleteCharAt(word.length()-1);
         }
-        
-        cnt++;
-        
-        for (int i=0;i<5;i++){
-            dfs(makingWord.append(w[i]), word);
-            makingWord.deleteCharAt(makingWord.length()-1);
-            if (exitFlag) break;
-        }
-        
-        return cnt;
+        return count;
     }
-    
-    public int solution(String word) {
+    public int solution(String target) {
         int answer = 0;
-        answer = dfs(new StringBuilder(), word);
-        
+        answer = dfs(new StringBuilder(), 0, target);
         return answer;
-        
     }
 }
