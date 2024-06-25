@@ -1,19 +1,17 @@
 class Solution {
     public int[] solution(int brown, int yellow) {
-        int[] answer = new int[2];
-        for (int i=1;i<=yellow;i++){
-            if (yellow%i==0){
-                int a = i; // 세로
-                int b = yellow / i; // 가로
-                
-                int brownNum = a * 2 + b * 2 + 4;
-                if (brown == brownNum){
-                    answer[0] = b + 2;
-                    answer[1] = a + 2;
-                    break;
+        //1. 갈색 블록으로 경우의 수 구하기
+        int sum = (brown+4)/2;
+        System.out.println(sum);
+        for (int a=1;a<=sum/2;a++){
+            int b = sum - a;
+            if ((a-2) * (b-2) == yellow){
+                if (a>=b){
+                    return new int[]{a,b};
                 }
+                return new int[]{b,a};
             }
         }
-        return answer;
+        return new int[]{0,0};
     }
 }
