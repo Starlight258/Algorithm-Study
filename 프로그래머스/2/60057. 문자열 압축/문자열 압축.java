@@ -4,32 +4,19 @@ class Solution {
         //1. 문자열 쪼개기
         for (int i=1;i<=s.length();i++){ // 쪼갤 단어 개수
             StringBuffer result = new StringBuffer();
-            String last = "";
-            int plusNum = 1;
-            for (int j=0;j<s.length();j+=i){ // 인덱스
-                String split = "";
-                if (j+i >= s.length()) split = s.substring(j);
-                else split = s.substring(j, j+i);  
-                // 이전 문자와 비교
-                if (j==0) last = split;
-                else if (last.equals(split)){
-                    plusNum++;
+            String prev = s.substring(0,i);
+            int count = 1;
+            for (int j=i;j<s.length();j+=i){ // 인덱스
+                String split = s.substring(j, Math.min(j + i, s.length()));  
+                if (prev.equals(split)){
+                    count++;
                 } else {
-                    if (plusNum==1) result.append(last);
-                    else{
-                      result.append(plusNum + last);
-                      plusNum=1;
-                    } 
-                    last = split;
+                    result.append(count>1?count:"").append(prev);
+                    count=1;
+                    prev = split;
                 }
             }
-            if (plusNum>=1){
-                if (plusNum==1) result.append(last);
-                else{
-                  result.append(plusNum + last);
-                  plusNum=1;
-                } 
-            }
+            result.append(count>1?count:"").append(prev);
             answer = Math.min(answer, result.length());
         }
         return answer;
