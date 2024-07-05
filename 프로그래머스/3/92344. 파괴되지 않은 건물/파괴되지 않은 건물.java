@@ -14,22 +14,16 @@ class Solution {
     }
     public void check(int[][] d, int[] skill){
         int type = skill[0];
+        type = type == 1 ? -1 : 1;
         int r1 = skill[1];
         int c1 = skill[2];
         int r2 = skill[3];
         int c2 = skill[4];
         int degree = skill[5];
-        if (type==1){ // 적(-)
-            d[r1][c1] -= degree;
-            d[r1][c2+1] += degree;
-            d[r2+1][c1] += degree;
-            d[r2+1][c2+1] -= degree;
-        } else { // 아군(+)
-            d[r1][c1] += degree;
-            d[r1][c2+1] -= degree;
-            d[r2+1][c1] -= degree;
-            d[r2+1][c2+1] += degree;
-        }
+        d[r1][c1] += degree * type;
+        d[r1][c2+1] += degree * -type;
+        d[r2+1][c1] += degree * -type;
+        d[r2+1][c2+1] += degree * type;
     }
     public void calculate(int[][] d, int[][] board){
         int height = board.length-1;
