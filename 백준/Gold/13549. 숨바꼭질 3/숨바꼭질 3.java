@@ -1,53 +1,44 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    static final int MAX = 100000;
-    static int n;
-    static int k;
-    static int[] visited;
-
-    public static void bfs() {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(n);
-        visited[n] = 1;
-
-        while (!queue.isEmpty()) {
-            Integer cur = queue.poll();
-            if (cur == k) {
-                System.out.println(visited[cur] - 1);
-                return;
-            }
-            if (cur * 2 <= MAX && visited[cur * 2] == 0) {
-                queue.add(cur * 2);
-                visited[cur * 2] = visited[cur];
-            }
-            if (cur - 1 >= 0 && visited[cur - 1] == 0) {
-                queue.add(cur - 1);
-                visited[cur - 1] = visited[cur] + 1;
-            }
-            if (cur + 1 <= MAX && visited[cur + 1] == 0) {
-                queue.add(cur + 1);
-                visited[cur + 1] = visited[cur] + 1;
-            }
-        }
-    }
-
     public static void main(String[] args) throws IOException {
-        //1. 입력받기
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        n = Integer.parseInt(st.nextToken());
-        k = Integer.parseInt(st.nextToken());
-        visited = new int[MAX + 1];
+        int n = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(st.nextToken());
 
-        //2. bfs
-        bfs();
+        int[] time = new int[100001];
+        Arrays.fill(time, -1);
 
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(n);
+        time[n] = 0;
+
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+            if (cur * 2 <= 100000) {
+                if (time[cur * 2] == -1) {
+                    time[cur * 2] = time[cur];
+                    q.offer(cur * 2);
+                } 
+            }
+            for (int next : new int[]{cur - 1, cur + 1}) {
+                if (next < 0 || next > 100000) {
+                    continue;
+                }
+                if (time[next] == -1) {
+                    time[next] = time[cur] + 1;
+                    q.offer(next);
+                }
+            }
+        }
+
+        System.out.println(time[k]);
     }
 }
