@@ -18,19 +18,17 @@ public class Main {
         Arrays.sort(houses);
 
         //2. 이진탐색 수행하기
-        int max = houses[houses.length - 1];
         int left = 1;
         int right = houses[n - 1] - houses[0];
         int answer = 0;
         while (left <= right) {
             int mid = (left + right) / 2;
             int count = 1;
-            boolean isHome = false;
             int prev = houses[0];
             for (int i = 1; i < n; i++) {
                 if (houses[i] - prev >= mid) {
-                    prev = houses[i];
                     count++;
+                    prev = houses[i];
                 }
             }
             if (count < c) {
