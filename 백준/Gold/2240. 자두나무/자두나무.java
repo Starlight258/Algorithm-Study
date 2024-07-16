@@ -4,28 +4,40 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int[] apple;
-    static int[][][] dp = new int[1004][2][34];  // 시간 위치 이동횟수
-    public static int dfs(int t, int pos, int w, int time){
-        if (t == time) return 0;
-        if (dp[t][pos][w]>0) return dp[t][pos][w];
-        int notMove = dfs(t+1, pos, w, time) + (apple[t]-1 == pos ? 1 : 0);
+
+    static int t;
+    static int w;
+    static int[] arr;
+    static int[][][] dp; // 시간 위치 이동횟수
+    static int answer = 0;
+
+    static int go(int curW, int curT, int pos) {
+        if (curT == t) {
+            return 0;
+        }
+        if (dp[curT][pos][curW] != 0) {
+            return dp[curT][pos][curW];
+        }
+        int movePos = pos == 1 ? 0 : 1;
         int move = 0;
-        if (w>0) move = dfs(t+1, (pos==0?1:0), w-1, time) + + (apple[t]-1 == pos ? 1 : 0);
-        return dp[t][pos][w] = Math.max(notMove, move);
+        if (curW < w) {
+            move = go(curW + 1, curT + 1, movePos) + (movePos == arr[curT] ? 1 : 0);
+        }
+        int notMove = go(curW, curT + 1, pos) + (arr[curT] == pos ? 1 : 0);
+        return dp[curT][pos][curW] = Math.max(move, notMove);
     }
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int time = Integer.parseInt(st.nextToken());
-        int wMove = Integer.parseInt(st.nextToken());
-        apple = new int[time];
-        for (int i = 0; i < time; i++) {
-            apple[i] = Integer.parseInt(br.readLine());
+        t = Integer.parseInt(st.nextToken());
+        w = Integer.parseInt(st.nextToken());
+        arr = new int[t];
+        for (int i = 0; i < t; i++) {
+            arr[i] = Integer.parseInt(br.readLine()) - 1;
         }
-        int answer = Math.max(dfs(0, 0, wMove, time), dfs(0, 1, wMove - 1, time));
+        dp = new int[t + 1][2][w + 1];
+        answer = Math.max(go(0, 0, 0), go(1, 0, 1));
         System.out.println(answer);
     }
-
-
 }
