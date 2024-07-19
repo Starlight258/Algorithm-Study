@@ -34,7 +34,7 @@ public class Main {
                             arrList.add(arr[j]);
                         }
                     }
-                    if (arrList.size() != n) {
+                    if (arrList.size() < n) {
                         for (int j = 0; j < use.length; j++) {
                             if (use[j] && !arrList.contains(j)) {
                                 use[j] = false;
