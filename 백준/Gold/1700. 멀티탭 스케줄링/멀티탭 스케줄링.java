@@ -34,14 +34,15 @@ public class Main {
                             arrList.add(arr[j]);
                         }
                     }
-                    if (arrList.size() < n) {
-                        for (int j = 0; j < use.length; j++) {
-                            if (use[j] && !arrList.contains(j)) {
-                                use[j] = false;
-                                break;
-                            }
+                    boolean flag = false;
+                    for (int j = 0; j < use.length; j++) {
+                        if (use[j] && !arrList.contains(j)) {
+                            use[j] = false;
+                            flag = true;
+                            break;
                         }
-                    } else {
+                    }
+                    if (!flag) {
                         int remove = arrList.get(arrList.size() - 1);
                         use[remove] = false;
                     }
