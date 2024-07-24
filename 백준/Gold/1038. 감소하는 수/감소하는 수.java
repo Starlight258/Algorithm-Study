@@ -29,9 +29,6 @@ public class Main {
         if (n <= 10) {
             System.out.println(n);
             return;
-        } else if (n >= 1023) {
-            System.out.println(-1);
-            return;
         }
 
         list = new ArrayList<>();
@@ -40,6 +37,10 @@ public class Main {
         }
 
         Collections.sort(list);
-        System.out.println(list.get(n));
+        if (list.size() <= n) {
+            System.out.println(-1);
+        } else {
+            System.out.println(list.get(n));
+        }
     }
 }
