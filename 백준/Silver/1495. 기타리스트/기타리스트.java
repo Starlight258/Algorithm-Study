@@ -9,27 +9,8 @@ public class Main {
     static int s;
     static int m;
     static int[] volumes;
-    static boolean[][] visited;
-    static int answer = -1;
-
-    private static void dfs(int index, int volume) {
-        if (index == n) {
-            answer = Math.max(answer, volume);
-            return;
-        }
-        if (visited[index][volume]) {
-            return;
-        }
-        visited[index][volume] = true;
-
-        if (volume + volumes[index] <= m) {
-            dfs(index + 1, volume + volumes[index]);
-        }
-
-        if (volume - volumes[index] >= 0) {
-            dfs(index + 1, volume - volumes[index]);
-        }
-    }
+    static boolean[][] dp;
+    static int answer;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -37,18 +18,34 @@ public class Main {
         n = Integer.parseInt(st.nextToken());
         s = Integer.parseInt(st.nextToken());
         m = Integer.parseInt(st.nextToken());
-
         volumes = new int[n];
         st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
             volumes[i] = Integer.parseInt(st.nextToken());
         }
 
-        //2. visited
-        visited = new boolean[n][1001];
+        dp = new boolean[n][50001];
+        answer = -1;
         dfs(0, s);
 
-        //3. 정답 출력
         System.out.println(answer);
+    }
+
+    private static void dfs(int idx, int sum) {
+        if (idx == n) {
+            answer = Math.max(sum, answer);
+            return;
+        }
+        if (dp[idx][sum]) {
+            return;
+        }
+        dp[idx][sum] = true;
+
+        if (sum + volumes[idx] >= 0 && sum + volumes[idx] <= m) {
+            dfs(idx + 1, sum + volumes[idx]);
+        }
+        if (sum - volumes[idx] >= 0 && sum - volumes[idx] <= m) {
+            dfs(idx + 1, sum - volumes[idx]);
+        }
     }
 }
