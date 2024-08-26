@@ -7,24 +7,23 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
+        int[] matrix = new int[n + 1];
         StringTokenizer st;
-        int[] data = new int[n + 1];
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
             int r = Integer.parseInt(st.nextToken());
             int c = Integer.parseInt(st.nextToken());
-            data[i] = r;
-            data[i + 1] = c;
+            matrix[i] = r;
+            matrix[i + 1] = c;
         }
 
-        int[][] dp = new int[n][n];
-
+        int[][] dp = new int[n][n]; // i~j까지 곱셈 연산 최소값
         for (int i = 2; i <= n; i++) { // 곱할 행렬 개수
-            for (int j = 0; j <= n - i; j++) { // 구간 시작점
-                dp[j][j + i - 1] = Integer.MAX_VALUE;
-                for (int k = j; k < j + i - 1; k++) { // 나눌 지점
-                    int value = dp[j][k] + dp[k + 1][j + i - 1] + (data[j] * data[k + 1] * data[j + i]);
-                    dp[j][j + i - 1] = Math.min(dp[j][j + i - 1], value);
+            for (int j = 0; j <= n - i; j++) { // 시작 위치
+                dp[j][i + j - 1] = Integer.MAX_VALUE;
+                for (int k = j; k < i + j - 1; k++) { // 나눌 위치
+                    int value = dp[j][k] + dp[k + 1][j + i - 1] + (matrix[j] * matrix[k + 1] * matrix[j + i]);
+                    dp[j][i + j - 1] = Math.min(dp[j][j + i - 1], value);
                 }
             }
         }
