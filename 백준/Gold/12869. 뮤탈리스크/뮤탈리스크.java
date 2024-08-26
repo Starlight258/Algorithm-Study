@@ -1,59 +1,45 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    static int n;
-    static int[] scvs;
-    static int[][][] dp;
-    static int[][] cases = {
-            {-9, -3, -1},
-            {-9, -1, -3},
-            {-3, -9, -1},
-            {-3, -1, -9},
-            {-1, -9, -3},
-            {-1, -3, -9}
-    };
-
-    private static int dfs(int s1, int s2, int s3) {
-        if (s1 == 0 && s2 == 0 && s3 == 0) {
-            return 0;
-        }
-
-        if (dp[s1][s2][s3] != Integer.MAX_VALUE) {
-            return dp[s1][s2][s3];
-        }
-
-        for (int i = 0; i < cases.length; i++) {
-            int ns1 = Math.max(0, s1 + cases[i][0]);
-            int ns2 = Math.max(0, s2 + cases[i][1]);
-            int ns3 = Math.max(0, s3 + cases[i][2]);
-            dp[s1][s2][s3] = Math.min(dp[s1][s2][s3],
-                    1 + dfs(ns1, ns2, ns3));
-        }
-        return dp[s1][s2][s3];
-    }
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(br.readLine());
+        int n = Integer.parseInt(br.readLine());
+        int[] scvs = new int[3];
         StringTokenizer st = new StringTokenizer(br.readLine());
-        scvs = new int[3];
         for (int i = 0; i < n; i++) {
             scvs[i] = Integer.parseInt(st.nextToken());
         }
+        int[][] attacks = {
+                {9, 3, 1}, {9, 1, 3}, {3, 9, 1}, {3, 1, 9}, {1, 9, 3}, {1, 3, 9}
+        };
+        boolean[][][] dp = new boolean[61][61][61];
+        // bfs
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{scvs[0], scvs[1], scvs[2], 1});
+        dp[scvs[0]][scvs[1]][scvs[2]] = true;
 
-        // dp 수행
-        dp = new int[61][61][61];
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp.length; j++) {
-                Arrays.fill(dp[i][j], Integer.MAX_VALUE);
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            for (int i = 0; i < attacks.length; i++) {
+                int first = Math.max(cur[0] - attacks[i][0], 0);
+                int second = Math.max(cur[1] - attacks[i][1], 0);
+                int last = Math.max(cur[2] - attacks[i][2], 0);
+                if (dp[first][second][last]) {
+                    continue;
+                }
+                int depth = cur[3];
+                if (first == 0 && second == 0 && last == 0) {
+                    System.out.println(depth);
+                    return;
+                }
+                q.offer(new int[]{first, second, last, depth + 1});
+                dp[first][second][last] = true;
             }
         }
-
-        System.out.println(dfs(scvs[0], scvs[1], scvs[2]));
     }
 }
