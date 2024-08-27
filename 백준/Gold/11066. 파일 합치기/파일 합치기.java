@@ -18,9 +18,9 @@ public class Main {
             }
 
             int[][] dp = new int[k + 1][k + 1]; // i부터 j까지 중간합 최소값
-            for (int i = 1; i < k; i++) { // 더할 개수
-                for (int j = 1; j <= k - i; j++) { // 시작 위치
-                    int end = j + i;
+            for (int i = 2; i <= k; i++) { // 더할 범위
+                for (int j = 1; j <= k - i + 1; j++) { // 시작 위치
+                    int end = j + i - 1;
                     dp[j][end] = Integer.MAX_VALUE;
                     for (int l = j; l < end; l++) { // 나눌 위치(끝 제외)
                         dp[j][end] = Math.min(dp[j][end],
