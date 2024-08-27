@@ -7,30 +7,27 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int t = Integer.parseInt(br.readLine());
-
         while (t-- > 0) {
             int k = Integer.parseInt(br.readLine());
-            int[] pages = new int[k + 1];
-            int[] sum = new int[k + 1];
-            int[][] dp = new int[k + 1][k + 1];
-
+            int[] files = new int[k + 1];
+            int[] prefix = new int[k + 1];
             StringTokenizer st = new StringTokenizer(br.readLine());
             for (int i = 1; i <= k; i++) {
-                pages[i] = Integer.parseInt(st.nextToken());
-                sum[i] = sum[i - 1] + pages[i];
+                files[i] = Integer.parseInt(st.nextToken());
+                prefix[i] = prefix[i - 1] + files[i];
             }
 
-            for (int n = 1; n <= k; n++) { // 몇장씩
-                for (int from = 1; from + n <= k; from++) { // 출발점
-                    int to = from + n;
-                    dp[from][to] = Integer.MAX_VALUE;
-                    for (int divide = from; divide < to; divide++) {
-                        dp[from][to] = Math.min(dp[from][to], dp[from][divide] + dp[divide + 1][to]
-                                + sum[to] - sum[from - 1]);
+            int[][] dp = new int[k + 1][k + 1]; // i부터 j까지 중간합 최소값
+            for (int i = 1; i < k; i++) { // 더할 개수
+                for (int j = 1; j <= k - i; j++) { // 시작 위치
+                    int end = j + i;
+                    dp[j][end] = Integer.MAX_VALUE;
+                    for (int l = j; l < end; l++) { // 나눌 위치(끝 제외)
+                        dp[j][end] = Math.min(dp[j][end],
+                                dp[j][l] + dp[l + 1][end] + prefix[end] - prefix[j - 1]);
                     }
                 }
             }
-
             System.out.println(dp[1][k]);
         }
     }
