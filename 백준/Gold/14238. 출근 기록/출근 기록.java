@@ -4,49 +4,50 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    static boolean[][][][][] visited; // a 남은횟수,b 남은횟수,c 남은횟수, 1번째전 알파벳, 2번째전 알파벳
-    static int aCnt = 0, bCnt = 0, cCnt = 0;
+    static int aCount;
+    static int bCount;
+    static int cCount;
+    static boolean visited[][][][][];
 
-    private static void dfs(int a, int b, int c, String record, int prev, int secondPrev) {
-        if (a == 0 && b == 0 && c == 0) {
-            System.out.println(record);
+    private static void dfs(int aCount, int bCount, int cCount, int prev, int prevprev, String result) {
+        if (aCount == 0 && bCount == 0 & cCount == 0) {
+            System.out.println(result);
             System.exit(0);
         }
 
-        if (visited[a][b][c][prev][secondPrev]) {
+        if (visited[aCount][bCount][cCount][prev][prevprev]) {
             return;
         }
+        visited[aCount][bCount][cCount][prev][prevprev] = true;
 
-        visited[a][b][c][prev][secondPrev] = true;
-
-        if (a > 0) {
-            dfs(a - 1, b, c, record + 'A', 0, prev);
+        if (aCount > 0) {
+            dfs(aCount - 1, bCount, cCount, 0, prev, result + 'A');
         }
-        if (b > 0 && prev != 1) {
-            dfs(a, b - 1, c, record + 'B', 1, prev);
+        if (bCount > 0 && prev != 1) {
+            dfs(aCount, bCount - 1, cCount, 1, prev, result + 'B');
         }
-        if (c > 0 && secondPrev != 2 && prev != 2) {
-            dfs(a, b, c - 1, record + 'C', 2, prev);
+        if (cCount > 0 && prev != 2 && prevprev != 2) {
+            dfs(aCount, bCount, cCount - 1, 2, prev, result + 'C');
         }
     }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line = br.readLine();
+        int aCount = 0, bCount = 0, cCount = 0;
 
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == 'A') {
-                aCnt++;
-            } else if (line.charAt(i) == 'B') {
-                bCnt++;
+        for (char c : line.toCharArray()) {
+            if (c == 'A') {
+                aCount++;
+            } else if (c == 'B') {
+                bCount++;
             } else {
-                cCnt++;
+                cCount++;
             }
         }
-        visited = new boolean[aCnt + 1][bCnt + 1][cCnt + 1][3][3]; // 0:A, 1:B, 2:C
+        visited = new boolean[aCount + 1][bCount + 1][cCount + 1][3][3];
 
-        dfs(aCnt, bCnt, cCnt, "", 0, 0);
-
+        dfs(aCount, bCount, cCount, 0, 0, "");
         System.out.println(-1);
     }
 }
