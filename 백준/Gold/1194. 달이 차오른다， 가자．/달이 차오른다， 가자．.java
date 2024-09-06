@@ -28,6 +28,7 @@ public class Main {
                 if (map[i][j] == '0') {
                     startY = i;
                     startX = j;
+                    map[i][j] = '.';
                 }
             }
         }
@@ -37,7 +38,7 @@ public class Main {
     }
 
     private static void bfs(int y, int x) {
-        int[][][] visited = new int[n][m][128];
+        int[][][] visited = new int[n][m][64];
         int key = 0;
         visited[y][x][key] = 1;
 
