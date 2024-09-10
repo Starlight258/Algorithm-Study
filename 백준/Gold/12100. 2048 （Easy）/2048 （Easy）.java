@@ -1,7 +1,10 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
+
     private static int n;
     private static int[][] board;
     private static int maxBlock = 0;
@@ -36,6 +39,7 @@ public class Main {
         for (int dir = 0; dir < 4; dir++) {
             move(dir);
             dfs(depth + 1);
+            // 회복
             for (int i = 0; i < n; i++) {
                 board[i] = tempBoard[i].clone();
             }
@@ -44,10 +48,19 @@ public class Main {
 
     private static void move(int dir) {
         switch (dir) {
-            case 0: moveUp(); break;
-            case 1: moveRight(); break;
-            case 2: moveDown(); break;
-            case 3: moveLeft(); break;
+            case 0:
+                moveUp();
+                break;
+
+            case 1:
+                moveRight();
+                break;
+            case 2:
+                moveDown();
+                break;
+            case 3:
+                moveLeft();
+                break;
         }
     }
 
@@ -61,7 +74,7 @@ public class Main {
                         board[index - 1][col] = block * 2;
                         maxBlock = Math.max(maxBlock, block * 2);
                         block = 0;
-                        board[row][col] = 0;
+                        board[row][col] = block;
                     } else {
                         block = board[row][col];
                         board[row][col] = 0;
@@ -83,7 +96,7 @@ public class Main {
                         board[index + 1][col] = block * 2;
                         maxBlock = Math.max(maxBlock, block * 2);
                         block = 0;
-                        board[row][col] = 0;
+                        board[row][col] = block;
                     } else {
                         block = board[row][col];
                         board[row][col] = 0;
@@ -105,7 +118,7 @@ public class Main {
                         board[row][index - 1] = block * 2;
                         maxBlock = Math.max(maxBlock, block * 2);
                         block = 0;
-                        board[row][col] = 0;
+                        board[row][col] = block;
                     } else {
                         block = board[row][col];
                         board[row][col] = 0;
@@ -127,7 +140,7 @@ public class Main {
                         board[row][index + 1] = block * 2;
                         maxBlock = Math.max(maxBlock, block * 2);
                         block = 0;
-                        board[row][col] = 0;
+                        board[row][col] = block;
                     } else {
                         block = board[row][col];
                         board[row][col] = 0;
