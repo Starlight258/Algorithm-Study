@@ -1,32 +1,28 @@
-import java.util.*;
 class Solution {
     public int solution(int n, int[] lost, int[] reserve) {
-        int answer = 0;
-        int[] arr = new int[n];
+        int[] nums = new int[n];
         for (int i=0;i<lost.length;i++){
-            arr[lost[i]-1] = -1;
+            nums[lost[i]-1]--; 
         }
         for (int i=0;i<reserve.length;i++){
-            arr[reserve[i]-1]++;
+            nums[reserve[i]-1]++;
         }
-        //2. 체육복 빌려주기
-        Arrays.sort(lost);
-        for (int i=0;i<lost.length;i++){
-            int l = lost[i]-1;
-            if (arr[l]!=-1) continue;
-            if (l>0 && arr[l-1]>0){
-                arr[l-1]--;
-                arr[l]++;
-            }
-            else if (l+1<n&&arr[l+1]>0){
-                arr[l+1]--;
-                arr[l]++;
+        for (int i=0;i<n;i++){
+            if (nums[i]>0){
+                if (i-1>=0 && nums[i-1]<0){
+                    nums[i-1]=0;
+                    nums[i]=0;
+                }
+                else if (i+1<n&& nums[i+1]<0){
+                    nums[i+1]=0;
+                    nums[i]=0;
+                }
             }
         }
-        //3. 정답
-        for (int a:arr){
-            if (a>=0) answer++;
+        int lostNum = 0;
+        for (int i=0;i<n;i++){
+            if (nums[i]<0) lostNum++;
         }
-        return answer;
+        return n - lostNum;
     }
 }
