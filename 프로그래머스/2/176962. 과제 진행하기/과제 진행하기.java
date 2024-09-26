@@ -3,8 +3,10 @@ class Solution {
     public String[] solution(String[][] plans) {
         // 정렬하기
         Arrays.sort(plans, (String[] p1, String[] p2) -> convertToMinutes(p1[1]) - convertToMinutes(p2[1]));
+        
         List<String> list = new ArrayList<>();
         Stack<int[]> stk = new Stack<>();
+        
         for (int i=0;i<plans.length;i++){
             String[] plan = plans[i];
             int now = convertToMinutes(plans[i][1]);
@@ -21,11 +23,11 @@ class Solution {
             if (endTime > nextStartTime){
                 stk.add(new int[]{i, endTime - nextStartTime}); // 잠시 멈춘 과제
             } else {
-                int remain = nextStartTime - endTime;
                 list.add(plans[i][0]);
                 if (endTime == nextStartTime){
                     continue;
                 } else { // 시간 남으면 가장 최근에 멈춘 과제 수행하기
+                    int remain = nextStartTime - endTime;
                     while (true){
                         if (stk.isEmpty() || remain<=0){
                             break;
