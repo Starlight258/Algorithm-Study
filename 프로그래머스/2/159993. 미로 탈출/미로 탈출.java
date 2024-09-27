@@ -1,78 +1,52 @@
 import java.util.*;
+
 class Solution {
-    class Pair{
-        int y;
-        int x;
-        Pair(int y, int x){
-            this.y = y;
-            this.x = x;
-        }
-    }
+    static int[] dy = {-1,0,1,0};
+    static int[] dx = {0,1,0,-1};
+    static int n=0, m=0;
     
-    int[][] visited = new int[104][104];
-    int[] dy = {-1,0,1,0};
-    int[] dx = {0,1,0,-1};
-    
-    void bfs(int[] start, String[] maps){
-        Queue<Pair> queue = new LinkedList<>();
-        queue.offer(new Pair(start[0], start[1]));
-        visited[start[0]][start[1]] = 1;
+    private static int bfs(String[] maps, int[] start, int[] end){
+        int y = start[0],x = start[1];
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{y ,x, 1});
+        boolean[][] visited = new boolean[n][m];
+        visited[y][x] = true;
         
-        while (!queue.isEmpty()){
-            Pair current = queue.poll();
-            int y = current.y;
-            int x = current.x;
+        while (!q.isEmpty()){
+            int[] cur = q.poll();
+            y = cur[0]; x = cur[1];
+            if (y == end[0] && x == end[1]){
+                return cur[2];
+            }
             for (int i=0;i<4;i++){
-                int ny = y+dy[i];
-                int nx = x+dx[i];
-                if (ny<0||nx<0||ny>=maps.length||nx>=maps[0].length()) continue;
-                if (visited[ny][nx]>0 || maps[ny].charAt(nx)=='X') continue;
-                visited[ny][nx] = visited[y][x]+1;
-                queue.offer(new Pair(ny, nx));
+                int ny = y + dy[i];
+                int nx = x + dx[i];
+                if (ny<0||nx<0||ny>=n||nx>=m) continue;
+                if (maps[ny].charAt(nx) == 'X' || visited[ny][nx]) continue;
+                q.add(new int[]{ny, nx, cur[2]+1});
+                visited[ny][nx] = true;
             }
         }
+        return -1;
     }
     public int solution(String[] maps) {
         int answer = 0;
-        int[] start = new int[2];
-        int[] end = new int[2];
-        int[] lever = new int[2];
-        
-        for (int i=0;i<maps.length;i++){
-            for (int j=0;j<maps[i].length();j++){
+        int[] start = {}, end = {}, lev = {};
+        n = maps.length; m = maps[0].length();
+        for (int i=0;i<n;i++){
+            for (int j=0;j<m;j++){
                 if (maps[i].charAt(j) == 'S'){
-                    start[0] = i; 
-                    start[1] = j;
-                }
-                if (maps[i].charAt(j) == 'E'){
-                    end[0] = i;
-                    end[1] = j;
-                }
-                if (maps[i].charAt(j) == 'L'){
-                    lever[0] = i;
-                    lever[1] = j;
+                    start = new int[]{i, j};
+                } else if (maps[i].charAt(j) == 'E'){
+                    end = new int[]{i, j};
+                } else if (maps[i].charAt(j) == 'L'){
+                    lev = new int[]{i, j};
                 }
             }
         }
-        
-        bfs(start, maps);
-        
-        answer = visited[lever[0]][lever[1]]-1;
-        if (answer == -1){
-            return -1;
-        }
-        
-        for (int i=0;i<maps.length;i++){
-            Arrays.fill(visited[i], 0);
-        }
-        
-        bfs(lever, maps);
-        
-        if (visited[end[0]][end[1]] == 0){
-            return -1;
-        }
-        answer += visited[end[0]][end[1]] -1;
-        
-        return answer;
+        int a1 = bfs(maps, start, lev);
+        int a2 = bfs(maps, lev, end);
+        if (a1 == -1 || a2 == -1) return -1;
+        return a1 + a2 - 2;
     }
 }
