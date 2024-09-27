@@ -6,25 +6,25 @@ class Solution {
     static int n=0, m=0;
     
     private static int bfs(String[] maps, int[] start, int[] end){
-        int y = start[0],x = start[1];
+        int y = start[0], x = start[1];
         Queue<int[]> q = new LinkedList<>();
-        q.offer(new int[]{y ,x, 1});
-        boolean[][] visited = new boolean[n][m];
-        visited[y][x] = true;
+        q.offer(new int[]{y ,x});
+        int[][] visited = new int[n][m];
+        visited[y][x] = 1;
         
         while (!q.isEmpty()){
             int[] cur = q.poll();
             y = cur[0]; x = cur[1];
             if (y == end[0] && x == end[1]){
-                return cur[2];
+                return visited[y][x];
             }
             for (int i=0;i<4;i++){
                 int ny = y + dy[i];
                 int nx = x + dx[i];
                 if (ny<0||nx<0||ny>=n||nx>=m) continue;
-                if (maps[ny].charAt(nx) == 'X' || visited[ny][nx]) continue;
-                q.add(new int[]{ny, nx, cur[2]+1});
-                visited[ny][nx] = true;
+                if (maps[ny].charAt(nx) == 'X' || visited[ny][nx]>0) continue;
+                q.add(new int[]{ny, nx});
+                visited[ny][nx] = visited[y][x]+1;
             }
         }
         return -1;
