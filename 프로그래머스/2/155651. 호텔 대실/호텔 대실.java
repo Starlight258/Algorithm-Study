@@ -1,39 +1,35 @@
 import java.util.*;
-
 class Solution {
-    class Reservation implements Comparable<Reservation>{
-        int start;
-        int end;
-        Reservation(int start, int end){
-            this.start = start;
-            this.end = end;
-        }
-        public int compareTo(Reservation r){
-            return this.start - r.start;
-        }
-    }
-    public int calculateTime(String inputTime){
-        String[] splitTime = inputTime.split(":");
-        int time = Integer.parseInt(splitTime[0]) * 60;
-        time += Integer.parseInt(splitTime[1]);
-        return time;
-    }
     public int solution(String[][] book_time) {
-        ArrayList<Reservation> list = new ArrayList<Reservation>();
-        for (String[] bt:book_time){
-            int startTime = calculateTime(bt[0]);
-            int endTime = calculateTime(bt[1]);
-            list.add(new Reservation(startTime, endTime));
+        int answer = 0;
+        // 1. 분으로 저장하여 끝나는 시간 빠른대로 정렬
+        List<int[]> list = new ArrayList<>();
+        for (String[] book : book_time){
+            list.add(new int[]{getMinutes(book[0]), getMinutes(book[1])+10});     
         }
-        Collections.sort(list);
-        
-        PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
-        for (Reservation r:list){
-            if (!pq.isEmpty() && pq.peek() <= r.start){
-                pq.poll();
+        list.sort(new Comparator<int[]>(){
+            public int compare(int[] a, int[] b){
+                return Integer.compare(a[0], b[0]);
             }
-            pq.add(r.end+10);
+        });
+        //2. 방 구하기
+        PriorityQueue<Integer> q = new PriorityQueue<>();
+        for (int[] room : list) {
+            while (!q.isEmpty() && q.peek() <= room[0]) {
+                q.poll();
+            }
+            q.offer(room[1]);
+            answer = Math.max(answer, q.size());
         }
-        return pq.size();
+
+        return answer;
+        
+    }
+    
+    private int getMinutes(String time){
+        String[] splited = time.split(":");
+        int h = Integer.parseInt(splited[0]);
+        int m = Integer.parseInt(splited[1]);
+        return h * 60 + m;
     }
 }
