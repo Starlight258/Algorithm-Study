@@ -1,22 +1,21 @@
 class Solution {
     public int solution(int storey) {
         int answer = 0;
-        int currentDigit = 0;
         
-        while (storey > 0){
-            currentDigit = storey%10;
-            storey /= 10;
+        while (storey > 0) {
+            int digit = storey % 10;
+            int nextDigit = (storey / 10) % 10;
             
-            if (currentDigit<5){
-                answer += currentDigit;
-            } else if (currentDigit>5){
-                answer += (10-currentDigit);
-                storey++;
+            if (digit > 5 || (digit == 5 && nextDigit >= 5)) {
+                answer += 10 - digit;
+                storey += 10;
             } else {
-                answer += 5;
-                if ((storey%10) >= 5) storey++;                
+                answer += digit;
             }
+            
+            storey /= 10;
         }
+        
         return answer;
     }
 }
