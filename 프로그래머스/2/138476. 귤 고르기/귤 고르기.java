@@ -10,7 +10,7 @@ class Solution {
         }
         // 개수별 내림차순 정렬
         List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(mp.entrySet());
-        Collections.sort(entryList, (a, b) -> b.getValue().compareTo(a.getValue()));
+        entryList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         // 귤 담기
         for (Map.Entry<Integer, Integer> e : entryList){
             k -= e.getValue();
