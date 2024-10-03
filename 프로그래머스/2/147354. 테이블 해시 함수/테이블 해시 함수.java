@@ -15,13 +15,11 @@ class Solution {
         });
   
         // row_begin~row_end에 대해 각 Si 구하기
-        int[] s = new int[data.length];
         for (int r=row_begin;r<=row_end;r++){
             int si = 0;
             for (int idx=0;idx<data[row_begin].length;idx++){
                 si += data[r][idx] % (r+1);
             }
-            s[r] = si;
             answer ^= si;
         }
         
