@@ -1,16 +1,24 @@
 import java.util.*;
+
 class Solution {
     public int solution(int[] order) {
         int answer = 0;
-        int pos=0;
         Stack<Integer> stk = new Stack<>();
-        
+        int pos = 1;
         for (int i=0;i<order.length;i++){
-            stk.push(i+1);
-            while (!stk.isEmpty() && stk.peek()==order[pos]){
+            while (pos < order[i]){
+                stk.push(pos++);
+            } 
+            if (pos == order[i]){
                 answer++;
-                stk.pop();
                 pos++;
+                continue;
+            }
+            if (pos > order[i]){
+                if (stk.peek() == order[i]){
+                    stk.pop(); 
+                    answer++;
+                } else break;
             }
         }
         return answer;
