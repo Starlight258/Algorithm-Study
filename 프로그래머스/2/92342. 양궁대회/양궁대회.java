@@ -1,42 +1,47 @@
 class Solution {
-    int[] result = new int[11];
-    int[] answer = {-1};
-    int diffMax = 0;
-    void dfs(int depth, int n, int[] info){
-        if (depth==n){
-            int diff = getDiff(result, info);
-            if (diff >= diffMax){
-                diffMax = diff;
-                answer = result.clone();
+    private int[] answer = null;
+    private int maxDiff = 0;
+
+    public int[] solution(int n, int[] info) {
+        int[] result = new int[11];
+        dfs(0, 0, 0, result, info, n, 0);
+        return answer != null ? answer : new int[]{-1};
+    }
+
+    private void dfs(int depth, int score, int num, int[] result, int[] info, int n, int apeach) {
+        if (depth == info.length) {
+            int diff = score - apeach;
+            if (diff > 0 && diff >= maxDiff) {
+                if (num < n) {
+                    result[10] += n - num;
+                }
+                if (diff > maxDiff || isLowerScoreBetter(result, answer)) {
+                    maxDiff = diff;
+                    answer = result.clone();
+                }
+                if (num < n) {
+                    result[10] -= n - num;
+                }
             }
             return;
         }
-        // 모든 경우의 수 구하기
-        for (int i=0;i<info.length;i++){
-            if (result[i]>info[i]) break;
-            result[i]++;
-            dfs(depth+1, n, info);
-            result[i]--;
+
+        if (num + info[depth] + 1 <= n) {
+            result[depth] = info[depth] + 1;
+            dfs(depth + 1, score + 10 - depth, num + info[depth] + 1, result, info, n, apeach);
+            result[depth] = 0;
         }
+
+        if (info[depth] > 0) apeach += 10 - depth;
+        dfs(depth + 1, score, num, result, info, n, apeach);
     }
-    
-    int getDiff(int[] result, int[] info){
-        int lScore = 0, aScore=0;
-        for (int i=0;i<info.length;i++){
-            if (info[i] >= result[i]){
-                if (info[i] == 0) continue;
-                aScore += (10-i);
-            }
-            else lScore += (10-i);
+
+    private boolean isLowerScoreBetter(int[] result, int[] answer) {
+        if (answer == null) return true;
+        for (int i = 10; i >= 0; i--) {
+            if (result[i] > answer[i]) return true;
+            if (result[i] < answer[i]) return false;
         }
-        return lScore - aScore;
-    }
-    
-    public int[] solution(int n, int[] info) {
-        dfs(0, n, info);
-        
-        if (diffMax==0) return new int[]{-1};
-        
-        return answer;
+        return false;
     }
 }
