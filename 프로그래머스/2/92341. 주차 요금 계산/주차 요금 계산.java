@@ -1,9 +1,11 @@
 import java.util.*;
 
 class Solution {
-    Map<Integer, Integer> busIn = new HashMap<>();
-    Map<Integer, Integer> busTime = new HashMap<>();
-    Map<Integer, Integer> costs = new HashMap<>();
+    private static final int END_OF_DAY_MINUTES = 23 * 60 + 59;
+    
+    Map<Integer, Integer> carEntryTimes = new HashMap<>();
+    Map<Integer, Integer> carParkingDurations = new HashMap<>();
+    Map<Integer, Integer> carFees = new HashMap<>();
     public int[] solution(int[] fees, String[] records) {
         for (String record:records){
             String[] splited = record.split(" ");
@@ -12,24 +14,24 @@ class Solution {
             int bus = Integer.parseInt(splited[1]);
             boolean isIn = splited[2].equals("IN")? true : false;
             if (isIn){
-                busIn.put(bus, minutes);
+                carEntryTimes.put(bus, minutes);
             } else {
-                int remain = minutes - busIn.get(bus);
-                busTime.put(bus, busTime.getOrDefault(bus, 0) + remain);
-                busIn.remove(bus);
+                int remain = minutes - carEntryTimes.get(bus);
+                carParkingDurations.put(bus, carParkingDurations.getOrDefault(bus, 0) + remain);
+                carEntryTimes.remove(bus);
             }
         }
         
         // 남은 차량은 23:59분에 출차
-        for (Map.Entry<Integer, Integer> e:busIn.entrySet()){
-            int remain = 23*60+59 - busIn.get(e.getKey());
-            busTime.put(e.getKey(), busTime.getOrDefault(e.getKey(), 0) + remain);
+        for (Map.Entry<Integer, Integer> e:carEntryTimes.entrySet()){
+            int remain = END_OF_DAY_MINUTES - carEntryTimes.get(e.getKey());
+            carParkingDurations.put(e.getKey(), carParkingDurations.getOrDefault(e.getKey(), 0) + remain);
         }
         // 계산
-       for (Map.Entry<Integer, Integer> e:busTime.entrySet()){       
+       for (Map.Entry<Integer, Integer> e:carParkingDurations.entrySet()){       
             calculateCost(e.getKey(), e.getValue(), fees);
         }
-        TreeMap<Integer, Integer> tm = new TreeMap<>(costs);
+        TreeMap<Integer, Integer> tm = new TreeMap<>(carFees);
         List<Integer> answer = new ArrayList<>(tm.values());
         return answer.stream().mapToInt(x->x).toArray();
     }
@@ -43,8 +45,8 @@ class Solution {
         int remain = minutes - fees[0];
         int cost = fees[1];
         if (remain>0){
-            cost += (remain/fees[2] + (remain%fees[2]==0?0:1)) * fees[3];
+            cost += (int)Math.ceil((double)remain/fees[2]) * fees[3];
         } 
-        costs.put(bus, costs.getOrDefault(bus, 0)+cost);
+        carFees.put(bus, carFees.getOrDefault(bus, 0)+cost);
     }
 }
