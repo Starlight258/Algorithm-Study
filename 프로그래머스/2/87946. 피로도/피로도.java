@@ -4,6 +4,7 @@ class Solution {
     private int n;
     private boolean[] visited;
     private int answer = 0;
+    
     public int solution(int k, int[][] dungeons) {
         n = dungeons.length;
         visited = new boolean[n];
