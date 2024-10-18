@@ -18,44 +18,39 @@ class Solution {
         }
 
         // 결과 문자열 배열 생성
-        int height = (int) (maxY - minY + 1);
+        int height = (int) (maxY - minY+1);
         int width = (int) (maxX - minX + 1);
         char[][] grid = new char[height][width];
-        for (char[] row : grid) {
+        for (char[] row:grid){
             Arrays.fill(row, '.');
         }
 
         // 별 그리기
-        for (Point p : points) {
-            int x = (int) (p.x - minX);
-            int y = (int) (maxY - p.y);
+        for (Point point:points){
+            int x = (int) (point.x - minX);
+            int y = (int) (maxY - point.y);
             grid[y][x] = '*';
         }
 
         // 결과를 문자열 배열로 변환
         String[] result = new String[height];
-        for (int i = 0; i < height; i++) {
+        for (int i=0;i<height;i++){
             result[i] = new String(grid[i]);
         }
-
         return result;
     }
 
-    private Point findIntersection(int[] line1, int[] line2) {
-        long a = line1[0], b = line1[1], e = line1[2];
+    private Point findIntersection(int[] line1, int[] line2){
+        long a = line1[0], b=line1[1], e=line1[2];
         long c = line2[0], d = line2[1], f = line2[2];
-        long denominator = a * d - b * c;
+        long deno = a*d - b*c;
+        if (deno==0) return null;
         
-        if (denominator == 0) return null;  // 평행한 경우
-
-        long xNumerator = b * f - e * d;
-        long yNumerator = e * c - a * f;
-
-        if (xNumerator % denominator != 0 || yNumerator % denominator != 0) {
-            return null;  // 정수가 아닌 교차점
-        }
-
-        return new Point(xNumerator / denominator, yNumerator / denominator);
+        long xNumerator = b*f-e*d;
+        long yNumerator = e*c-a*f;
+        if (xNumerator % deno !=0 || yNumerator%deno !=0) return null;
+        
+        return new Point(xNumerator/deno, yNumerator/deno);
     }
 
     private void updateBounds(Point p) {
