@@ -1,38 +1,60 @@
+import java.util.ArrayList;
+import java.util.List;
+
 class Solution {
-    int dfs(int node, boolean[][] graph, boolean[] visited, int n){
+    static List<List<Integer>> graph;
+    static int min;
+ 
+    public int solution(int n, int[][] wires) {
+        // 두 번째 코드의 리스트 초기화 방식 사용
+        graph = new ArrayList<>(n + 1);
+        min = Integer.MAX_VALUE;
+ 
+        // 그래프 초기화
+        for (int i = 0; i <= n; i++) {
+            graph.add(new ArrayList<>());
+        }
+ 
+        // 양방향 간선 추가
+        for (int[] wire : wires) {
+            graph.get(wire[0]).add(wire[1]);
+            graph.get(wire[1]).add(wire[0]);
+        }
+ 
+        // 각 간선을 끊어보며 최소 차이 계산
+        for (int[] wire : wires) {
+            int v1 = wire[0];
+            int v2 = wire[1];
+ 
+            boolean[] visited = new boolean[n + 1];
+ 
+            // 해당 간선을 그래프에서 제거
+            graph.get(v1).remove(Integer.valueOf(v2));
+            graph.get(v2).remove(Integer.valueOf(v1));
+ 
+            int cnt = dfs(1, visited); // 임의의 시작점에서 dfs 탐색
+ 
+            int diff = Math.abs(cnt - (n - cnt));
+            min = Math.min(min, diff);
+ 
+            // 그래프에 다시 간선 추가
+            graph.get(v1).add(v2);
+            graph.get(v2).add(v1);
+        }
+ 
+        return min;
+    }
+ 
+    static int dfs(int v, boolean[] visited) {
+        visited[v] = true;
         int cnt = 1;
-        visited[node] = true;
-        for (int i=1;i<=n;i++){
-            if (!visited[i] && graph[node][i]){
-                visited[i] = true;
-                cnt += dfs(i, graph, visited, n);
+ 
+        for (int next : graph.get(v)) {
+            if (!visited[next]) {
+                cnt += dfs(next, visited);
             }
         }
+ 
         return cnt;
-    }
-    public int solution(int n, int[][] wires) {
-        int answer = Integer.MAX_VALUE;
-        // 1. 정점별 연결 정보 저장
-        boolean[][] graph = new boolean[n+1][n+1];
-        for (int[] wire : wires){
-            graph[wire[0]][wire[1]] = true;
-            graph[wire[1]][wire[0]] = true;
-        }
-        
-        // 2. 두 노드 선택 후 dfs
-        for (int[] wire:wires){
-            boolean[] visited = new boolean[n+1];
-            int a = wire[0]; 
-            int b = wire[1];
-            // 간선 제거
-            graph[a][b] = graph[b][a] = false;
-            // dfs 수행
-            int cnt1 = dfs(a, graph, visited, n);
-            int cnt2 = n - cnt1;
-            answer = Math.min(answer, Math.abs(cnt1- cnt2));
-            // 간선 복원
-            graph[a][b] = graph[b][a] = true;
-        }
-        return answer;
     }
 }
