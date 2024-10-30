@@ -33,6 +33,7 @@ class Solution {
         int[][] visited = new int[n][m];
         q.offer(new int[]{y, x, 0});
         visited[y][x] = 1;
+        
         while (!q.isEmpty()){
             int[] cur = q.poll();
             y = cur[0];
@@ -43,7 +44,6 @@ class Solution {
             for (int i=0;i<4;i++){
                 int ny = y + dy[i];
                 int nx = x + dx[i];
-                int ndistance = distance+1;
                 if (ny<0||nx<0||ny>=n||nx>=m || visited[ny][nx]>0) continue;
                 if (place[ny].charAt(nx) == 'P'){
                     if (distance<2){
@@ -52,7 +52,7 @@ class Solution {
                      continue;
                 }
                 if (place[ny].charAt(nx)=='X') continue;    
-                q.offer(new int[]{ny, nx, ndistance});
+                q.offer(new int[]{ny, nx, distance+1});
                 visited[ny][nx] = 1;
             }
         }
