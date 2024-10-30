@@ -1,26 +1,18 @@
-import java.util.ArrayList;
-
 class Solution {
     public int[] solution(String s) {
-        int[] answer = new int[2];
-        int cnt = 0;
-        int numCnt = 0;
-        while (s.length()>1){
-            // 0 제거하기
-            cnt += s.length(); 
-            s = s.replaceAll("0", "");
-            cnt -= s.length();
-           
-            // 2진법으로 표현하기
-            int num = s.length();
-            StringBuffer numStr = new StringBuffer("");
-            s = Integer.toBinaryString(num);
-            numCnt++;
+        int round = 0;
+        int totalCount = 0;
+        while (!s.equals("1")){
+            round++;
+            int count = 0;
+            //1. 0의 개수 세기
+            for (char c:s.toCharArray()){
+                if (c=='0') count++;
+            }
+            totalCount += count;
+            //2. 1의 개수로 이진수 만들기
+            s = Integer.toBinaryString(s.length()-count);
         }
-        
-        answer[0] = numCnt;
-        answer[1] = cnt;
-        
-         return answer;
+        return new int[]{round, totalCount};
     }
 }
