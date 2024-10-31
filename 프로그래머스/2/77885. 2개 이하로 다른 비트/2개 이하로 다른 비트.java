@@ -1,33 +1,27 @@
 import java.util.*;
+
 class Solution {
-    long findZeroIdx(long number){
-        long idx=1;
-        while (number>0){
-            if (number%2==0){
-                return idx;
-            } 
-            idx++;
-            number /= 2;
-        }
-        return idx;
-    }
-    long makeAnswer(long number, long idx){
-        for (int i=0;i<idx;i++){
-            number += Math.pow(2, i);
-        }
-        return number;
-    }
     public long[] solution(long[] numbers) {
-        ArrayList<Long> answer = new ArrayList<Long>();
-        for (long number:numbers){
-            long returnValue = 0;
-            long zeroIdx = findZeroIdx(number);
-            if (zeroIdx<=2) {
-                answer.add(number+1);
-                continue;
+        long[] answer = new long[numbers.length];
+        
+        for (int i = 0; i<numbers.length; i++) {
+            long result = numbers[i];
+            String target = Long.toBinaryString(numbers[i]);
+            
+            if (result % 2 == 0) {
+                answer[i] = result + 1;
+            } else {
+                int idx = target.lastIndexOf("0");
+                
+                if (idx == -1) {
+                    String tmp = "10" + target.substring(1, target.length());
+                    answer[i] = Long.parseLong(tmp, 2);
+                } else {
+                    String tmp = target.substring(0, idx) + "10" + target.substring(idx + 2, target.length());
+                    answer[i] = Long.parseLong(tmp, 2);
+                }
             }
-            answer.add(makeAnswer(number+1, zeroIdx-2));
         }
-        return answer.stream().mapToLong(x->x).toArray();
+        return answer;
     }
 }
