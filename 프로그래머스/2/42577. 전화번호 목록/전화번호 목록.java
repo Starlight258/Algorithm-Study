@@ -1,15 +1,18 @@
 import java.util.*;
+
 class Solution {
-    public boolean solution(String[] pb) {
-        boolean answer = true;
-        Arrays.sort(pb);
-        for (int i=0;i<pb.length-1;i++){
-            if (pb[i+1].startsWith(pb[i])){
-                answer = false;
-                break;
-            }
-            
+    public boolean solution(String[] phone_book) {
+        Map<String, Integer> mp = new HashMap<>();
+        for (String phone:phone_book){
+            mp.put(phone, 1);
         }
-        return answer;
+        for (String phone:phone_book){
+            for (int i=0;i<phone.length();i++){
+                if (mp.containsKey(phone.substring(0, i))){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
