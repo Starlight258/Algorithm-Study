@@ -7,10 +7,9 @@ class Solution {
     
     private String steps(String p){
         if (p.isEmpty() || isCorrect(p)) return p;
-        String u = "", v = "";
         for (int i=1;i<=p.length();i++){
-            u = p.substring(0, i);
-            v = p.substring(i);
+            String u = p.substring(0, i);
+            String v = p.substring(i);
             if (isBalanced(u) && isBalanced(v)){
                 String result = steps(v);
                 if (isCorrect(u)){
