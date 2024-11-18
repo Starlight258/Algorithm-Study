@@ -37,7 +37,7 @@ class Solution {
                     }
                     if (isValid){
                     combs.get(i).put(menu, combs.get(i).getOrDefault(menu, 0) + 1);
-                }
+                    }   
                 }
             }
         }
