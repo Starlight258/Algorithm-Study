@@ -2,62 +2,88 @@ import java.util.*;
 import java.util.regex.*;
 
 class Solution {
-    private static final Pattern PATTERN = Pattern.compile("(\\W*)(\\d+)");
 
     public long solution(String expression) {
         long answer = 0;
-        // 완전탐색
-        // 수식 모든 경우의 수
-        List<String> ops = new ArrayList<>();
-        List<Long> numbers = new ArrayList<>();
-        Matcher matcher = PATTERN.matcher(expression);
-        while (matcher.find()){
-            if (!matcher.group(1).isEmpty()) ops.add(matcher.group(1));
-            numbers.add(Long.parseLong(matcher.group(2)));         
-        }
-        List<String> uniqueOps = new ArrayList<>(new HashSet<>(ops));
-        List<String> opsNumber = new ArrayList<>();
-        makeOps(opsNumber, "", uniqueOps);
-        // 순서대로 진행해보기
-        for (String op:opsNumber){
-            List<String> tmpOps = new ArrayList<>(ops);
-            List<Long> tmpNumbers = new ArrayList<>(numbers);
-            for (char c:op.toCharArray()){ // 순서대로
-                while (tmpOps.contains(""+c)){
-                    int index = tmpOps.indexOf(c+"");
-                    if (index==-1) continue;
-                    long number = tmpNumbers.get(index);
-                    if (c=='+'){
-                        number += tmpNumbers.get(index+1);
-                    }
-                    if (c=='-'){
-                        number -= tmpNumbers.get(index+1);
-                    }
-                    if (c=='*'){
-                        number *= tmpNumbers.get(index+1);
-                    }
-                    tmpNumbers.remove(index);
-                    tmpNumbers.remove(index);
-                    tmpNumbers.add(index, number);
-                    tmpOps.remove(index);
-                }
-                
+        List<String> tokens = splitExpression(expression);
+        
+        // 고유한 연산자 추출
+        Set<String> operatorsUnique = new HashSet<>();
+        for (String token:tokens){
+            if (!token.matches("\\d+")){
+                operatorsUnique.add(token);
             }
-            answer = Math.max(answer, Math.abs(tmpNumbers.get(0)));
+        }    
+        
+        // 연산자 모든 조합 생성
+        List<String> operators = new ArrayList<>(operatorsUnique);
+        List<List<String>> priorities = new ArrayList<>();
+        generatePermutations(operators, priorities, new ArrayList<>());
+        
+        // 계산하여 최댓값 찾기
+        long maxResult = 0;
+        for (List<String> priority:priorities){
+            long result = Math.abs(calculateWithPriority(new ArrayList<>(tokens), priority));
+            maxResult = Math.max(maxResult, result);
         }
-
-        return answer;
+        return maxResult;
     }
     
-    private void makeOps(List<String> opsNumber, String op, List<String> uniqueOps){
-        if (op.length()==uniqueOps.size()){
-            opsNumber.add(op);
+    private long calculateWithPriority(List<String> tokens, List<String> priority){
+        for (String op:priority){
+            for (int i=1;i<tokens.size();i+=2){
+                if (tokens.get(i).equals(op)){
+                    long number = calculate(tokens.get(i), tokens.get(i-1), tokens.get(i+1));
+                    tokens.set(i-1, String.valueOf(number));
+                    tokens.remove(i);
+                    tokens.remove(i);
+                    i -=2;
+                }
+            }
+        }
+        return Long.parseLong(tokens.get(0));
+    }
+    
+    private long calculate(String op, String number1, String number2){
+        long number = Long.parseLong(number1);
+        if (op.equals("+")){
+            number += Long.parseLong(number2);
+        } else if (op.equals("-")){
+            number -= Long.parseLong(number2);
+        } else if (op.equals("*")){
+            number *= Long.parseLong(number2);
+        }
+        return number;
+    }
+    
+    private void generatePermutations(List<String> operators,  List<List<String>> result, List<String> current){
+        if (current.size() == operators.size()){
+            result.add(new ArrayList<>(current));
             return;
         }
-        if (op.length()>uniqueOps.size()) return;
-        for (int i=0;i<uniqueOps.size();i++){
-            if (op.contains(uniqueOps.get(i))) continue;
-            makeOps(opsNumber, op+uniqueOps.get(i), uniqueOps);
+        for (String op:operators){
+            if (!current.contains(op)){
+                current.add(op);
+                generatePermutations(operators, result, current);
+                current.remove(current.size()-1);
+            }
         }
+    }
+
+    
+    private List<String> splitExpression(String expression){
+        List<String> tokens = new ArrayList<>();
+        StringBuilder number = new StringBuilder();
+        for (char c:expression.toCharArray()){
+            if (Character.isDigit(c)){
+                number.append(c);
+            } else {
+                tokens.add(number.toString());
+                tokens.add(String.valueOf(c));
+                number = new StringBuilder();
+            }
+        }
+        tokens.add(number.toString());
+        return tokens;
     }
 }
