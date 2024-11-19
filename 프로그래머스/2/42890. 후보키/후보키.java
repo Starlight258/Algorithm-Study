@@ -34,30 +34,26 @@ class Solution {
     }
     private List<List<Integer>> makeKeys(int n){
         List<List<Integer>> keys = new ArrayList<>();
-        List<Integer> key = new ArrayList<>();
-        for (int i=0;i<n;i++){
-            key.add(i);
-        }
         boolean visited[] = new boolean[n];
-        for (int i=0;i<key.size();i++){
-            combination(keys, key, visited, 0, 0, i+1);
+        for (int i=0;i<n;i++){
+            combination(keys, visited, 0, 0, i+1, n);
         }
         
         return keys;
     }
-    private void combination(List<List<Integer>> keys, List<Integer> key, boolean[] visited, int start, int depth, int r){
+    private void combination(List<List<Integer>> keys, boolean[] visited, int start, int depth, int r, int n){
         if (depth==r){
             List<Integer> temp = new ArrayList<>();
-            for (int i=0;i<key.size();i++){
-                if (visited[i]) temp.add(key.get(i));
+            for (int i=0;i<n;i++){
+                if (visited[i]) temp.add(i);
             }
             keys.add(temp);
             return;
         }
-        for (int i=start;i<key.size();i++){
+        for (int i=start;i<n;i++){
             if (!visited[i]){
                 visited[i] = true;
-                combination(keys, key, visited, start+1, depth+1, r);
+                combination(keys, visited, start+1, depth+1, r, n);
                 visited[i] = false;
             }
         }
