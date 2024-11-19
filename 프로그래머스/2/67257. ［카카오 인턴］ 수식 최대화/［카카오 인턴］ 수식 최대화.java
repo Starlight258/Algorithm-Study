@@ -1,64 +1,63 @@
 import java.util.*;
+import java.util.regex.*;
 
 class Solution {
-    static long answer = 0;
-    static long[] numbers;
-    static String[] operators;
-    
-    void dfs(List<String> priority, boolean[] visited) {
-        if (priority.size() == 3) {
-            calculate(priority);
-            return;
-        }
-        for (String op : new String[]{"+", "-", "*"}) {
-            if (!visited[getOpIndex(op)]) {
-                visited[getOpIndex(op)] = true;
-                priority.add(op);
-                dfs(priority, visited);
-                priority.remove(priority.size() - 1);
-                visited[getOpIndex(op)] = false;
-            }
-        }
-    }
-
-    private int getOpIndex(String op) {
-        return op.equals("+") ? 0 : (op.equals("-") ? 1 : 2);
-    }
-
-    public void calculate(List<String> priority) {
-        ArrayList<Long> nums = new ArrayList<>(Arrays.asList(Arrays.stream(numbers).boxed().toArray(Long[]::new)));
-        ArrayList<String> ops = new ArrayList<>(Arrays.asList(operators));
-
-        for (String op : priority) {
-            for (int i = 0; i < ops.size(); i++) {
-                if (ops.get(i).equals(op)) {
-                    long result = applyOperator(nums.get(i), nums.get(i + 1), op);
-                    nums.set(i, result);
-                    nums.remove(i + 1);
-                    ops.remove(i);
-                    i--;
-                }
-            }
-        }
-
-        answer = Math.max(answer, Math.abs(nums.get(0)));
-    }
-
-    private long applyOperator(long a, long b, String op) {
-        switch (op) {
-            case "+": return a + b;
-            case "-": return a - b;
-            case "*": return a * b;
-            default: throw new IllegalArgumentException("Unknown operator: " + op);
-        }
-    }
+    private static final Pattern PATTERN = Pattern.compile("(\\W*)(\\d+)");
 
     public long solution(String expression) {
-        String[] numStrings = expression.split("[+\\-*]");
-        numbers = Arrays.stream(numStrings).mapToLong(Long::parseLong).toArray();
-        operators = expression.replaceAll("\\d+", "").split("");
+        long answer = 0;
+        // 완전탐색
+        // 수식 모든 경우의 수
+        List<String> ops = new ArrayList<>();
+        List<Long> numbers = new ArrayList<>();
+        Matcher matcher = PATTERN.matcher(expression);
+        while (matcher.find()){
+            if (!matcher.group(1).isEmpty()) ops.add(matcher.group(1));
+            numbers.add(Long.parseLong(matcher.group(2)));         
+        }
+        List<String> uniqueOps = new ArrayList<>(new HashSet<>(ops));
+        List<String> opsNumber = new ArrayList<>();
+        makeOps(opsNumber, "", uniqueOps);
+        // 순서대로 진행해보기
+        for (String op:opsNumber){
+            List<String> tmpOps = new ArrayList<>(ops);
+            List<Long> tmpNumbers = new ArrayList<>(numbers);
+            for (char c:op.toCharArray()){ // 순서대로
+                while (tmpOps.contains(""+c)){
+                    int index = tmpOps.indexOf(c+"");
+                    if (index==-1) continue;
+                    long number = tmpNumbers.get(index);
+                    if (c=='+'){
+                        number += tmpNumbers.get(index+1);
+                    }
+                    if (c=='-'){
+                        number -= tmpNumbers.get(index+1);
+                    }
+                    if (c=='*'){
+                        number *= tmpNumbers.get(index+1);
+                    }
+                    tmpNumbers.remove(index);
+                    tmpNumbers.remove(index);
+                    tmpNumbers.add(index, number);
+                    tmpOps.remove(index);
+                }
+                
+            }
+            answer = Math.max(answer, Math.abs(tmpNumbers.get(0)));
+        }
 
-        dfs(new ArrayList<>(), new boolean[3]);
         return answer;
+    }
+    
+    private void makeOps(List<String> opsNumber, String op, List<String> uniqueOps){
+        if (op.length()==uniqueOps.size()){
+            opsNumber.add(op);
+            return;
+        }
+        if (op.length()>uniqueOps.size()) return;
+        for (int i=0;i<uniqueOps.size();i++){
+            if (op.contains(uniqueOps.get(i))) continue;
+            makeOps(opsNumber, op+uniqueOps.get(i), uniqueOps);
+        }
     }
 }
