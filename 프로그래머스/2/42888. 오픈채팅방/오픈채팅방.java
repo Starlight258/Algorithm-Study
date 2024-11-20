@@ -1,26 +1,32 @@
 import java.util.*;
-class Solution {
-    public String[] solution(String[] record) {
-        ArrayList<String> answer = new ArrayList<String>();
-        HashMap<String, String> hm = new HashMap<>();
-        for (String rc:record){
-            String[] r = rc.split(" ");
-            if (r[0].equals("Enter") || r[0].equals("Change")){
-                hm.put(r[1], r[2]);
-            }
-        }
-        for (String rc:record){
-            String[] r = rc.split(" ");
-            if (r[0].equals("Enter")){
-                answer.add(new StringBuilder(hm.get(r[1])).append("님이 들어왔습니다.").toString());
-            }
-            else if (r[0].equals("Leave")){
-                answer.add(new StringBuilder(hm.get(r[1])).append("님이 나갔습니다.").toString());
-            }
-            
-        }
-        String[] ret = new String[answer.size()];
 
-        return answer.toArray(ret);
+class Solution {
+    public String[] solution(String[] records) {
+        Map<String, String> nicknames = new HashMap<>();
+        // 마지막 닉네임 저장
+        for (String record:records){
+            String[] split = record.split(" ");
+            if (split[0].equals("Enter")){
+                nicknames.put(split[1], split[2]);
+            } 
+            if (split[0].equals("Change")){
+                nicknames.put(split[1], split[2]); 
+            }
+        }
+
+        // 히스토리별 result 저장
+        List<String> result = new ArrayList<>();
+        for (String record:records){
+            String[] split = record.split(" ");
+                  String nickname = nicknames.get(split[1]);
+            if (split[0].equals("Enter")){
+                result.add(nickname+"님이 들어왔습니다.");
+                }
+            if (split[0].equals("Leave")){
+                result.add(nickname+"님이 나갔습니다.");
+            }
+        }
+        
+        return result.toArray(new String[0]);
     }
 }
