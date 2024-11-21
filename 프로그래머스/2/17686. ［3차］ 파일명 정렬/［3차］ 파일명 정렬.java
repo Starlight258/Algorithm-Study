@@ -1,42 +1,36 @@
 import java.util.*;
 import java.util.regex.*;
-class File implements Comparable<File>{
-    String head;
-    int number;
-    int idx;
-    File(String head, int number, int idx){
-        this.head = head.toUpperCase();
-        this.number = number;
-        this.idx = idx;
-    }
-    public int compareTo(File f){
-        if (this.head.equals(f.head)){
-            return this.number - f.number;
-        }
-        return this.head.compareTo(f.head);
-    }
 
-}
 class Solution {
     public String[] solution(String[] files) {
-        String[] answer = new String[files.length];
-        ArrayList<File> list = new ArrayList<File>();
-        Pattern pattern = Pattern.compile("\\d+");
-        for (int i=0;i<files.length;i++){
-            Matcher matcher = pattern.matcher(files[i]);
-            String head =""; String num = "";
-            if (matcher.find()){
-                head = files[i].substring(0, matcher.start());
-                num = files[i].substring(matcher.start(), matcher.end());
-                list.add(new File(head, Integer.parseInt(num), i));
+        String regex = "([A-Za-z- ]+)([0-9]+)(.*)";
+        Pattern pattern = Pattern.compile(regex);
+        List<List<String>> splited = new ArrayList<>();
+        for (String file:files){
+            Matcher matcher = pattern.matcher(file);
+            while (matcher.find()){
+                String head = matcher.group(1);
+                String number = matcher.group(2);
+                String tail = matcher.groupCount()==3?matcher.group(3):"";
+                splited.add(List.of(head, number, tail));                
             }
         }
-        Collections.sort(list);
-        for (int i=0;i<list.size();i++){
-            File f = list.get(i);
-            answer[i] = files[f.idx];
+        // 정렬
+        Collections.sort(splited, (s1, s2)->{
+            String ss1 = s1.get(0).toLowerCase();
+            String ss2 = s2.get(0).toLowerCase();
+            int result = ss1.compareTo(ss2);
+            if (result != 0){
+                return result;
+            }
+            int number1 = Integer.parseInt(s1.get(1));
+            int number2 = Integer.parseInt(s2.get(1));
+            return Integer.compare(number1, number2);
+        });
+        List<String> answer = new ArrayList<>();
+        for (List<String> split:splited){
+            answer.add(String.join("", split));
         }
-    
-        return answer;
+        return answer.toArray(new String[0]);
     }
 }
