@@ -34,26 +34,20 @@ class Solution {
         for (String word:words2){
             counts2.put(word, counts2.getOrDefault(word, 0)+1);
         }
-        List<String> intersection = getIntersection(counts1, counts2);
+        
+        int intersection = 0;
         int union = 0;
-        // 교집합에 없는 원소 추가하기
-         for (String key:words1){
-             if (intersection.contains(key)) continue;
-             union++;
-         }
-        for (String key:words2){
-             if (intersection.contains(key)) continue;
-             union++;
-         }
-        // 최대값만큼 더하기
-        for (String key:counts1.keySet()){
-            if (counts2.containsKey(key)){
-                int maxValue = Math.max(counts1.get(key), counts2.get(key));
-                union += maxValue;
-            }
+        Set<String> allKeys = new HashSet<>(counts1.keySet());
+        allKeys.addAll(counts2.keySet());
+        
+        for (String key:allKeys){
+            int count1 = counts1.getOrDefault(key, 0);
+            int count2 = counts2.getOrDefault(key, 0);
+            intersection += Math.min(count1, count2);
+            union += Math.max(count1, count2);
         }
- 
-        return (double)intersection.size() / union;
+   
+        return (double)intersection / union;
         
     }
     private List<String> getIntersection(Map<String, Integer> counts1, Map<String, Integer> counts2){
