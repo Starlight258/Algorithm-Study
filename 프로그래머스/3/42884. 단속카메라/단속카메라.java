@@ -1,20 +1,22 @@
 import java.util.*;
+
 class Solution {
     public int solution(int[][] routes) {
         int answer = 0;
-        //1. 끝점 기준 내림차순 정렬
-        Arrays.sort(routes, (o1,o2)->{
-            return o1[1] - o2[1]; 
-        });
-        //2. 끝점 기준 
-        int end = routes[0][1];
+        boolean[] visited = new boolean[routes.length];
+        Arrays.sort(routes, (r1, r2)-> Integer.compare(r1[1], r2[1]));
         if (routes.length==1) return 1;
-        for (int i=1;i<routes.length;i++){
-            if (end>=routes[i][0]) continue;
+        
+        for (int i=0;i<routes.length;i++){
+            if (visited[i]) continue;
+            visited[i] = true;
+            int end = routes[i][1];
             answer++;
-            end = routes[i][1];
+            while (i+1<routes.length && end >= routes[i+1][0]){
+                visited[i+1] = true;
+                i++;
+            }
         }
-    
-        return answer+1;
+        return answer;
     }
 }
