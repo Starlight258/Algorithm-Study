@@ -28,16 +28,14 @@ public class Main {
         Queue<Node> queue = new LinkedList<>();
         queue.offer(new Node(y, x));
         for (int round = 0; round < 8; round++) { // 8번만 피하면 모든 벽 사라짐
-            int size = queue.size(); 
+            int size = queue.size();
             for (int count = 0; count < size; count++) { // 같은 높이
                 Node now = queue.poll();
                 y = now.y;
                 x = now.x;
                 if (map[y][x] == '.') {
-                    queue.add(new Node(y, x));
-                } else {
-                    continue;
-                }
+                    queue.offer(new Node(y, x));
+                } else continue;
                 if (y == 0 && x == 7) {
                     return 1;
                 }
