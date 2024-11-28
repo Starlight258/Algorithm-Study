@@ -31,7 +31,7 @@ public class Main {
             for (int j = 0; j < m; j++) {
                 map[i][j] = line.charAt(j);
                 if (map[i][j] == 'S') {
-                    urchin = new int[]{i, j};
+                    urchin = new int[]{i, j, 0};
                     map[i][j] = '.';
                 }
                 if (map[i][j] == 'D') {
@@ -50,15 +50,10 @@ public class Main {
     private static int bfs() {
         Queue<int[]> waterQ = new LinkedList<>();
         Queue<int[]> beaverQ = new LinkedList<>();
-        int[][] beaverVisited = new int[n][m];
-        boolean[][] waterVisited = new boolean[n][m];
 
         beaverQ.add(urchin);
-        beaverVisited[urchin[0]][urchin[1]] = 1;
-
         for (int[] ints : water) {
             waterQ.offer(ints);
-            waterVisited[ints[0]][ints[1]] = true;
         }
 
         while (!beaverQ.isEmpty()) {
@@ -71,15 +66,13 @@ public class Main {
                 for (int i = 0; i < 4; i++) {
                     int ny = y + dy[i];
                     int nx = x + dx[i];
-                    if (ny < 0 || ny >= n || nx < 0 || nx >= m || waterVisited[ny][nx]) {
+                    if (ny < 0 || ny >= n || nx < 0 || nx >= m) {
                         continue;
                     }
-                    if (map[ny][nx] == 'X' || map[ny][nx] == 'D') {
-                        continue;
+                    if (map[ny][nx] == '.') {
+                        map[ny][nx] = '*';
+                        waterQ.add(new int[]{ny, nx});
                     }
-                    map[ny][nx] = '*';
-                    waterQ.add(new int[]{ny, nx});
-                    waterVisited[ny][nx] = true;
                 }
             }
 
@@ -89,20 +82,23 @@ public class Main {
                 int[] now = beaverQ.poll();
                 int y = now[0];
                 int x = now[1];
+                int distance = now[2];
                 for (int i = 0; i < 4; i++) {
                     int ny = y + dy[i];
                     int nx = x + dx[i];
-                    if (ny < 0 || ny >= n || nx < 0 || nx >= m || beaverVisited[ny][nx] != 0) {
+                    if (ny < 0 || ny >= n || nx < 0 || nx >= m) {
                         continue;
                     }
                     if (map[ny][nx] == 'X' || map[ny][nx] == '*') {
                         continue;
                     }
                     if (map[ny][nx] == 'D') {
-                        return beaverVisited[y][x];
+                        return distance + 1;
                     }
-                    beaverVisited[ny][nx] = beaverVisited[y][x] + 1;
-                    beaverQ.add(new int[]{ny, nx});
+                    if (map[ny][nx] == '.') {
+                        map[ny][nx] = 'S';
+                        beaverQ.add(new int[]{ny, nx, distance + 1});
+                    }
                 }
             }
         }
