@@ -1,122 +1,130 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-public class Main{
-	static int map[][];
-	
-	static HashMap<Integer,Integer[]> hashMap=new HashMap<>();
-	static int dy[] = {-1,1,0,0};
-	static int dx[] = {0,0,-1,1};
-	public static void main(String[] args) throws IOException{
+public class Main {
+    private static final int[] dy = {-1, 0, 1, 0};
+    private static final int[] dx = {0, 1, 0, -1};
 
-		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
-		StringTokenizer st;
+    private static int[][] map;
+    private static int n;
 
-		int n=Integer.parseInt(br.readLine());
-		map=new int[n][n];
-		
-		for(int i=0;i<n*n;i++) {
-			st=new StringTokenizer(br.readLine());
-			int s1 = Integer.parseInt(st.nextToken());
-			int s2 = Integer.parseInt(st.nextToken());
-			int s3 = Integer.parseInt(st.nextToken());
-			int s4 = Integer.parseInt(st.nextToken());
-			int s5 = Integer.parseInt(st.nextToken());
-			hashMap.put(s1,new Integer[] {s2,s3,s4,s5});
-			putStudent(s1);
-		}
-		int sum = 0;
-		for(int i=0;i<map.length;i++) {
-			for(int j=0;j<map.length;j++) {
-				
-				int count = 0;
-				Integer friends[] = hashMap.get(map[i][j]);
-				for(int k=0;k<4;k++) {
-					int nextY=i+dy[k];
-					int nextX=j+dx[k];
-					if(nextY<0||nextX<0||nextY>=map.length||nextX>=map.length)
-						continue;
-					int now = map[nextY][nextX];
-					
-					for(int p=0;p<4;p++)
-						if(now == friends[p]) count++;
-					
-				}
-				switch(count) {
-				case 1: sum += 1; break;
-				case 2: sum += 10; break;
-				case 3: sum += 100; break;
-				case 4: sum += 1000; break;
-				}
-				
-				
-			}
-		}
-		
-		System.out.println(sum);
-		
-		
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
+        map = new int[n][n];
 
-	}
-	public static void putStudent(int student) {
-		
-		Integer friends[] = hashMap.get(student);
-		int f1 = friends[0];
-		int f2 = friends[1];
-		int f3 = friends[2];
-		int f4 = friends[3];
-		
-		
-		ArrayList<Integer[]> list=new ArrayList<>();
-		for(int i=0;i<map.length;i++) {
-			for(int j=0;j<map.length;j++) {
-				int friendsCount = 0;
-				int emptyCount = 0;
-				for(int k=0;k<4;k++) {
-					int nextY=i+dy[k];
-					int nextX=j+dx[k];
-					if(nextY<0||nextX<0||nextY>=map.length||nextX>=map.length)
-						continue;
-					int now = map[nextY][nextX];
-					if(now==f1||now==f2||now==f3||now==f4)
-						friendsCount++;
-					if(now==0)
-						emptyCount++;
-					
-				}
-				list.add(new Integer[] {friendsCount,emptyCount,i,j});
-				
-			}
-		}
+        int[][] students = new int[n*n + 1][5];
 
-        Collections.sort(list,new Comparator<>() {
-			@Override
-			public int compare(Integer n1[],Integer n2[]) {
-				if(n1[0]<n2[0]) return 1;
-				else if(n1[0]==n2[0]) {
-					if(n1[1]<n2[1]) return 1;
-					else if(n1[1]==n2[1]) {
-						if(n1[2]>n2[2]) return 1;
-						else if(n1[2]==n2[2]) {
-							if(n1[3]>n2[3]) return 1;
-						}
-						
-					}
-				}
-				return -1;
-			}
-		});
-		
-		for(int i=0;i<list.size();i++) {
-			int y = list.get(i)[2];
-			int x = list.get(i)[3];
-			if(map[y][x]==0) {
-				map[y][x] = student;
-				return;
-			}
-			
-		}
-		
-	}
+        for (int i = 1; i <= n * n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int number = Integer.parseInt(st.nextToken());
+            students[number][0] = number;
+            for (int j = 1; j <= 4; j++) {
+                students[number][j] = Integer.parseInt(st.nextToken());
+            }
+            processEach(number, students[number]);
+        }
+
+        System.out.println(calculateTotalSatisfaction(students));
+    }
+
+    private static void processEach(int studentNumber, int[] favoriteStudents) {
+        Seat bestSeat = findBestSeat(studentNumber, favoriteStudents);
+        map[bestSeat.y][bestSeat.x] = studentNumber;
+    }
+
+    private static Seat findBestSeat(int studentNumber, int[] favoriteStudents) {
+        Seat bestSeat = new Seat(-1, -1, -1, -1);
+
+        for (int y = 0; y < n; y++) {
+            for (int x = 0; x < n; x++) {
+                if (map[y][x] != 0) continue;
+
+                int favoriteCount = 0;
+                int emptyCount = 0;
+
+                for (int k = 0; k < 4; k++) {
+                    int ny = y + dy[k];
+                    int nx = x + dx[k];
+
+                    if (ny < 0 || nx < 0 || ny >= n || nx >= n) continue;
+
+                    if (map[ny][nx] == 0) {
+                        emptyCount++;
+                    } else {
+                        for (int j = 1; j <= 4; j++) {
+                            if (map[ny][nx] == favoriteStudents[j]) {
+                                favoriteCount++;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                Seat currentSeat = new Seat(y, x, favoriteCount, emptyCount);
+                if (bestSeat.compareTo(currentSeat) > 0) {  
+                    bestSeat = currentSeat;
+                }
+            }
+        }
+
+        return bestSeat;
+    }
+
+    private static int calculateTotalSatisfaction(int[][] students) {
+        int totalSatisfaction = 0;
+
+        for (int y = 0; y < n; y++) {
+            for (int x = 0; x < n; x++) {
+                int studentNumber = map[y][x];
+                int favoriteCount = 0;
+
+                for (int k = 0; k < 4; k++) {
+                    int ny = y + dy[k];
+                    int nx = x + dx[k];
+
+                    if (ny < 0 || nx < 0 || ny >= n || nx >= n) continue;
+
+                    int[] currentStudent = students[studentNumber];
+                    for (int j = 1; j <= 4; j++) {
+                        if (map[ny][nx] == currentStudent[j]) {
+                            favoriteCount++;
+                            break;
+                        }
+                    }
+                }
+
+                totalSatisfaction += (favoriteCount > 0) ? Math.pow(10, favoriteCount - 1) : 0;
+            }
+        }
+
+        return totalSatisfaction;
+    }
+
+    static class Seat implements Comparable<Seat> {
+        int y, x, favoriteStudentNumber, emptyStudentNumber;
+
+        public Seat(int y, int x, int favoriteStudentNumber, int emptyStudentNumber) {
+            this.y = y;
+            this.x = x;
+            this.favoriteStudentNumber = favoriteStudentNumber;
+            this.emptyStudentNumber = emptyStudentNumber;
+        }
+
+        @Override
+        public int compareTo(Seat seat) {
+            if (this.favoriteStudentNumber != seat.favoriteStudentNumber) {
+                return Integer.compare(seat.favoriteStudentNumber, this.favoriteStudentNumber);
+            }
+            if (this.emptyStudentNumber != seat.emptyStudentNumber) {
+                return Integer.compare(seat.emptyStudentNumber, this.emptyStudentNumber);
+            }
+            if (this.y != seat.y) {
+                return Integer.compare(this.y, seat.y);
+            }
+            return Integer.compare(this.x, seat.x);
+        }
+    }
 }
