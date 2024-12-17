@@ -6,184 +6,168 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
+    private static int m;
+    private static int n;
+    private static char[][] map;
+    private static int[] dy = {-1, 0, 1, 0, 0};
+    private static int[] dx = {0, 1, 0, -1, 0};
+    private static int sy, sx;
+    private static int ey, ex;
+    private static int cnt;
+    private static boolean visit[][];
 
-	static int dy[] = { 0, 0, 1, -1, 0 };
-	static int dx[] = { 1, -1, 0, 0, 0 };
+    static class Signal {
+        int dir;
+        int a;
+        int b;
 
-	static int N, M;
+        public Signal(final int dir, final int a, final int b) {
+            this.dir = dir;
+            this.a = a;
+            this.b = b;
+        }
+    }
 
-	static char[][] map;
-	static boolean visit[][];
+    static class Pair {
+        int y;
+        int x;
 
-	static int cnt;
+        public Pair(final int y, final int x) {
+            this.y = y;
+            this.x = x;
+        }
+    }
 
-	static class Pair {
-		int y;
-		int x;
+    static Signal sig[];
 
-		public Pair(int y, int x) {
-			super();
-			this.y = y;
-			this.x = x;
-		}
-	}
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        StringBuilder sb = new StringBuilder();
 
-	// 최대 800초
-	static int sy, sx;
-	static int ey, ex;
+        while (true) {
+            st = new StringTokenizer(br.readLine());
+            m = Integer.parseInt(st.nextToken());
+            n = Integer.parseInt(st.nextToken());
+            if (m == 0 && n == 0) {
+                break;
+            }
+            cnt = 0;
+            map = new char[m][n];
+            visit = new boolean[m][n];
+            for (int i = 0; i < m; i++) {
+                map[i] = br.readLine().toCharArray();
+            }
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (map[i][j] >= '0' && map[i][j] <= '9') {
+                        cnt++;
+                    }
+                    if (map[i][j] == 'A') {
+                        sy = i;
+                        sx = j;
+                    }
+                    if (map[i][j] == 'B') {
+                        ey = i;
+                        ex = j;
+                    }
+                }
+            }
+            sig = new Signal[cnt];
 
-	static class Signal {
-		int dir;
-		int a;
-		int b;
+            for (int i = 0; i < cnt; i++) {
+                st = new StringTokenizer(br.readLine());
+                int n = Integer.parseInt(st.nextToken());
+                int d = st.nextToken().equals("-") ? 0 : 1; // 동서, 남북
+                int a = Integer.parseInt(st.nextToken());
+                int b = Integer.parseInt(st.nextToken());
+                sig[n] = new Signal(d, a, b);
+            }
+            br.readLine();
 
-		public Signal(int dir, int a, int b) {
-			super();
-			this.dir = dir;
-			this.a = a;
-			this.b = b;
-		}
-	}
+            int answer = BFS();
+            if (answer == -1) {
+                sb.append("impossible\n");
+            } else {
+                sb.append(answer).append("\n");
+            }
+        }
+        System.out.println(sb);
+    }
 
-	static Signal sig[];
+    public static int BFS() {
+        int time = 0;
+        Queue<Pair> queue = new LinkedList<>();
+        queue.offer(new Pair(sy, sx));
+        visit[sy][sx] = true;
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringBuilder sb = new StringBuilder();
-		StringTokenizer st;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int s = 0; s < size; s++) {
+                Pair cur = queue.poll();
+                if (cur.y == ey && cur.x == ex) {
+                    return time;
+                }
 
-		while (true) {
-			st = new StringTokenizer(br.readLine());
-			cnt = 0;
-			N = Integer.parseInt(st.nextToken());
-			M = Integer.parseInt(st.nextToken());
-			if (N == 0 && M == 0)
-				break;
+                for (int d = 0; d < 4; d++) {
+                    int ny = cur.y + dy[d];
+                    int nx = cur.x + dx[d];
+                    if (ny < 0 || nx < 0 || ny >= m || nx >= n) {
+                        continue;
+                    }
+                    if (visit[ny][nx] || map[ny][nx] == '.') {
+                        continue;
+                    }
+                    if (map[ny][nx] == '#' || map[ny][nx] == 'A' || map[ny][nx] == 'B') {
+                        visit[ny][nx] = true;
+                        queue.offer(new Pair(ny, nx));
+                    }
+                    if (map[ny][nx] >= '0' && map[ny][nx] <= '9') {
+                        int number = map[ny][nx] - '0';
+                        if (checkSignal(number, d, time)) {
+                            visit[ny][nx] = true;
+                            queue.offer(new Pair(ny, nx));
+                            continue;
+                        }
+                        queue.offer(new Pair(cur.y, cur.x));
+                    }
+                }
+            }
+            time++;
+        }
+        return -1;
+    }
 
-			map = new char[N][M];
-			visit = new boolean[N][M];
+    private static boolean checkSignal(final int number, final int d, int time) {
+        int dir = sig[number].dir;
+        int a = sig[number].a;
+        int b = sig[number].b;
+        int answer = 0;
+        time = time % (a + b); // 5 -> a=2, b=3
+        // 0,1 // 2,3,4
+        // 0,1,2 // 3,4
 
-			for (int i = 0; i < N; i++)
-				map[i] = br.readLine().toCharArray();
+        if (dir == 0) {
+            if (time - a >= 0) {
+                answer = (dir + 1) % 2;
+            } else {
+                answer = dir;
+            }
+        } else {
+            if (time - b >= 0) {
+                answer = (dir + 1) % 2;
+            } else {
+                answer = dir;
+            }
+        }
 
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < M; j++) {
-					if (map[i][j] >= '0' && map[i][j] <= '9') {
-						cnt++;
-					}
-
-					if (map[i][j] == 'A') {
-						sy = i;
-						sx = j;
-					}
-
-					if (map[i][j] == 'B') {
-						ey = i;
-						ex = j;
-					}
-				}
-			}
-
-			sig = new Signal[cnt];
-
-			for (int i = 0; i < cnt; i++) {
-				st = new StringTokenizer(br.readLine());
-				int n = Integer.parseInt(st.nextToken());
-				int d = st.nextToken().equals("-") ? 0 : 1;
-				int a = Integer.parseInt(st.nextToken());
-				int b = Integer.parseInt(st.nextToken());
-				sig[n] = new Signal(d, a, b);
-			}
-			br.readLine();
-
-			int ans = BFS();
-			if (ans == -1) {
-				sb.append("impossible\n");
-			} else {
-				sb.append(ans).append('\n');
-			}
-		}
-		System.out.println(sb.toString());
-	}
-
-	public static int BFS() {
-		int time = 0;
-		Queue<Pair> q = new LinkedList<Pair>();
-		q.add(new Pair(sy, sx));
-		visit[sy][sx] = true;
-
-		while (!q.isEmpty()) {
-			int size = q.size();
-			for (int s = 0; s < size; s++) {
-				Pair cur = q.poll();
-
-				if (cur.y == ey && cur.x == ex) {
-					return time;
-				}
-
-				// 이동한다.
-				for (int d = 0; d < 4; d++) {
-					int ny = cur.y + dy[d];
-					int nx = cur.x + dx[d];
-					if (ny < 0 || nx < 0 || ny >= N || nx >= M)
-						continue;
-					if (visit[ny][nx])
-						continue;
-					if (map[ny][nx] == '.')
-						continue;
-					if (map[ny][nx] == '#' || map[ny][nx] == 'A' || map[ny][nx] == 'B') {
-						visit[ny][nx] = true;
-						q.add(new Pair(ny, nx));
-					}
-
-					if (map[ny][nx] >= '0' && map[ny][nx] <= '9' && d != 4) {
-						int snum = map[ny][nx] - '0';
-						if (checkSignal(snum, d, time)) {
-							visit[ny][nx] = true;
-							q.add(new Pair(ny, nx));
-						}else {
-							q.add(new Pair(cur.y,cur.x));
-						}
-					}
-				}
-			}
-			time++;
-		}
-
-		return -1;
-	}
-
-	public static boolean checkSignal(int snum, int d, int time) {
-
-		// dir ==0 동서 dir == 1 남북
-		int dir = sig[snum].dir;
-		int a = sig[snum].a;
-		int b = sig[snum].b;
-		int ans = 0;
-		time = time % (a + b);
-
-		// 동서가 먼저일때
-		if (dir == 0) {
-			if (time - a >= 0) {
-				ans = (dir + 1) % 2;
-			} else {
-				ans = dir;
-			}
-
-		} else {
-			if (time - b >= 0) {
-				ans = (dir + 1) % 2;
-			} else {
-				ans = dir;
-			}
-		}
-
-		if (ans == 0 && (d == 0 || d == 1))
-			return true;
-		if (ans == 1 && (d == 2 || d == 3))
-			return true;
-
-		return false;
-	}
+        if (answer == 0 && (d == 1 || d == 3)) {
+            return true;
+        }
+        if (answer == 1 && (d == 0 || d == 2)) {
+            return true;
+        }
+        return false;
+    }
 
 }
