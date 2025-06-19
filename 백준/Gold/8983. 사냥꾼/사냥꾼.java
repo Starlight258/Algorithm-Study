@@ -27,26 +27,30 @@ public class Main {
             int y = Integer.parseInt(st.nextToken());
             animals.add(new int[]{x, y});
         }
-        animals.sort(((o1, o2) -> {
-            if (o1[0] == o2[0]) {
-                return o1[1] - o2[1];
-            }
-            return o1[0] - o2[0];
-        }));
-        // 2. 동물 돌면서 사격대와 거리 L 이하인지 확인
-        int answer = 0;
-        for (int[] animal : animals) {
+        // 2. 동물 순회하면서 적절한 사격대 찾기(O(logN)
+        int cnt = 0;
+        for (int i = 0; i < n; i++) {
+            int left = 0;
+            int right = m - 1;
+            int[] animal = animals.get(i);
             int x = animal[0];
             int y = animal[1];
-            for (Integer s : shoot) {
-                int distance = calculateDistance(x, y, s);
+            while (left <= right) {
+                int mid = (right - left) / 2 + left;
+                Integer shootPos = shoot.get(mid);
+                int distance = calculateDistance(x, y, shootPos);
                 if (distance <= l) {
-                    answer++;
+                    cnt++;
                     break;
+                }
+                if (shootPos < x) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
                 }
             }
         }
-        System.out.println(answer);
+        System.out.println(cnt);
     }
 
     private static int calculateDistance(int x, int y, int shoot) {
