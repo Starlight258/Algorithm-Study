@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -12,6 +13,7 @@ public class Main {
     private static final int INF = 1_000_000_000;
     private static final List<List<Node>> graph = new ArrayList<>();
     private static int[] d;
+    private static int[] prevCity;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -20,6 +22,7 @@ public class Main {
             graph.add(new ArrayList<>());
         }
         d = new int[n + 1];
+        prevCity = new int[n + 1];
         Arrays.fill(d, INF);
         int m = Integer.parseInt(br.readLine());
         StringTokenizer st;
@@ -40,7 +43,7 @@ public class Main {
 
     private static void dijkstra(final int start, final int end) {
         PriorityQueue<Node> pq = new PriorityQueue<>();
-        pq.offer(new Node(start, 0, new ArrayList<>(List.of(start))));
+        pq.offer(new Node(start, 0));
         d[start] = 0;
         while (!pq.isEmpty()) {
             Node wayPoint = pq.poll();
@@ -49,42 +52,38 @@ public class Main {
             if (d[wayPointIndex] < wayPointDistance) {
                 continue;
             }
-            if (wayPointIndex == end) {
-                System.out.println(d[end]);
-                System.out.println(wayPoint.path.size());
-                for (Integer node : wayPoint.path) {
-                    System.out.print(node + " ");
-                }
-                System.out.println();
-            }
             for (Node destination : graph.get(wayPointIndex)) {
                 int destinationIndex = destination.index;
                 int cost = d[wayPointIndex] + destination.distance;
                 if (d[destinationIndex] > cost) {
                     d[destinationIndex] = cost;
-                    ArrayList<Integer> addedPath = new ArrayList<>(wayPoint.path);
-                    addedPath.add(destinationIndex);
-                    pq.offer(new Node(destinationIndex, cost, addedPath));
+                    pq.offer(new Node(destinationIndex, cost));
+                    prevCity[destinationIndex] = wayPointIndex;
                 }
             }
+        }
+        System.out.println(d[end]);
+        // 거리 역추적
+        Stack<Integer> stk = new Stack<>();
+        int cur = end;
+        stk.add(cur);
+        while (prevCity[cur] != 0) {
+            cur = prevCity[cur];
+            stk.push(cur);
+        }
+        System.out.println(stk.size());
+        while (!stk.isEmpty()) {
+            System.out.print(stk.pop() + " ");
         }
     }
 
     private static class Node implements Comparable<Node> {
         private final int index;
         private final int distance;
-        private final List<Integer> path;
 
         public Node(final int index, final int distance) {
             this.index = index;
             this.distance = distance;
-            this.path = new ArrayList<>();
-        }
-
-        public Node(final int index, final int distance, final List<Integer> path) {
-            this.index = index;
-            this.distance = distance;
-            this.path = path;
         }
 
         @Override
