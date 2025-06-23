@@ -1,36 +1,53 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int k = Integer.parseInt(st.nextToken());
         int n = Integer.parseInt(st.nextToken());
-        long[] line = new long[k];
+
+        List<Long> lines = new ArrayList<>();
         for (int i = 0; i < k; i++) {
-            line[i] = Long.parseLong(br.readLine());
+            lines.add(Long.parseLong(br.readLine()));
         }
-        // 이진 탐색
-        long left = 1;
-        long right = Arrays.stream(line).max().getAsLong();
-        long answer = 0;
-        while (left <= right) {
-            long mid = (left + right) / 2;
-            int cnt = 0;
-            for (int i = 0; i < line.length; i++) {
-                cnt += line[i] / mid;
-            }
-            if (cnt < n) {
-                right = mid - 1;
-            } else { // n개이상의 랜선
-                left = mid + 1;
-                answer = Math.max(answer, mid);
-            }
-        }
-        System.out.println(answer);
+
+        System.out.println(getMaxLength(lines, n));
     }
+
+    public static boolean isPossible(List<Long> lines, long target, int n) {
+        long count = 0;
+        for (Long line : lines) {
+            count += line / target;
+        }
+        return count >= n;
+    }
+
+    public static long getMaxLength(List<Long> lines, int n) {
+        long left = 1;
+        long right = 1;
+        long answer = 0;
+        for (Long line : lines) {
+            right = Math.max(right, line);
+        }
+        while (left <= right) {
+            long mid = (right - left) / 2 + left;
+
+            if (isPossible(lines, mid, n)) {
+                answer = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return answer;
+    }
+
 }
