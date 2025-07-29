@@ -7,72 +7,70 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int n;
-    static int m;
-    static int[][] map;
-    static int[][] visited;
-    static int[] dy = {-1, 0, 1, 0};
-    static int[] dx = {0, 1, 0, -1};
-    static Queue<int[]> queue;
+    private static int[] dy = {-1, 0, 1, 0};
+    private static int[] dx = {0, 1, 0, -1};
 
-    static int bfs() {
-        int days = 0;
+    private static int[][] boxes;
+    private static int m;
+    private static int n;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        m = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
+        boxes = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < m; j++) {
+                boxes[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+
+        System.out.println(bfsse());
+    }
+
+    private static int bfsse() {
+        int[][] visited = new int[n][m];
+        Queue<int[]> queue = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (boxes[i][j] == 1) {
+                    queue.offer(new int[]{i, j});
+                    visited[i][j] = 1;
+                }
+            }
+        }
 
         while (!queue.isEmpty()) {
             int[] cur = queue.poll();
-            int curY = cur[0];
-            int curX = cur[1];
-
+            int y = cur[0];
+            int x = cur[1];
             for (int i = 0; i < 4; i++) {
-                int ny = curY + dy[i];
-                int nx = curX + dx[i];
-
-                if (ny < 0 || nx < 0 || ny >= m || nx >= n || map[ny][nx] != 0) {
+                int ny = y + dy[i];
+                int nx = x + dx[i];
+                if (ny < 0 || nx < 0 || ny >= n || nx >= m) {
                     continue;
                 }
-
-                map[ny][nx] = map[curY][curX] + 1;
-                queue.add(new int[]{ny, nx});
-                days = Math.max(map[ny][nx], days);
-            }
-        }
-
-        return days - 1;
-    }
-
-    public static void main(String[] args) throws IOException {
-        //1. 입력받기
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        n = Integer.parseInt(st.nextToken()); // 가로
-        m = Integer.parseInt(st.nextToken()); // 세로
-
-        map = new int[m][n];
-        visited = new int[m][n];
-        queue = new LinkedList<>();
-
-        for (int i = 0; i < m; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < n; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
-                if (map[i][j] == 1) {
-                    queue.add(new int[]{i, j});
+                if (boxes[ny][nx] == 0 & visited[ny][nx] == 0) {
+                    boxes[ny][nx] = 1;
+                    queue.offer(new int[]{ny, nx});
+                    visited[ny][nx] = visited[y][x] + 1;
                 }
             }
         }
 
-        //2. bfs
-        int result = bfs();
-
-        //3. 결과 출력하기
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (map[i][j] == 0) {
-                    System.out.println(-1);
-                    return;
+        int answer = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (boxes[i][j] == 0) {
+                    return -1;
                 }
+                answer = Math.max(answer, visited[i][j] - 1);
             }
         }
-        System.out.println(result == -1 ? 0 : result);
+        return answer;
+
     }
+
 }
