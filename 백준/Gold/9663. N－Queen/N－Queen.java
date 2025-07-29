@@ -22,6 +22,7 @@ public class Main {
             answer++;
             return;
         }
+
         for (int i = 0; i < n; i++) {
             map[depth] = i;
             if (canQueen(depth)) {
@@ -35,7 +36,7 @@ public class Main {
             if (map[i] == map[depth]) {
                 return false;
             }
-            if (Math.abs(depth - i) == Math.abs(map[depth] - map[i])) {
+            if (Math.abs(i - depth) == Math.abs(map[i] - map[depth])) {
                 return false;
             }
         }
