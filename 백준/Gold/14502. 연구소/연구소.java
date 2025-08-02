@@ -9,12 +9,13 @@ import java.util.StringTokenizer;
 
 public class Main {
 
+    private static final int[] dy = {-1, 0, 1, 0};
+    private static final int[] dx = {0, 1, 0, -1};
+
     private static int n;
     private static int m;
     private static int[][] maps;
-    private static List<int[]> areas;
-    private static int[] dy = {-1, 0, 1, 0};
-    private static int[] dx = {0, 1, 0, -1};
+    private static List<int[]> emptySpaces;
     private static int answer = 0;
 
     public static void main(String[] args) throws IOException {
@@ -23,35 +24,32 @@ public class Main {
         n = Integer.parseInt(st.nextToken());
         m = Integer.parseInt(st.nextToken());
         maps = new int[n][m];
-        areas = new ArrayList<>();
+        emptySpaces = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < m; j++) {
                 maps[i][j] = Integer.parseInt(st.nextToken());
                 if (maps[i][j] == 0) {
-                    areas.add(new int[]{i, j});
+                    emptySpaces.add(new int[]{i, j});
                 }
             }
         }
 
-        int size = areas.size();
-        for (int i = 0; i < size; i++) {
-            int[] node = areas.get(i);
-            maps[node[0]][node[1]] = 1;
-            for (int j = i + 1; j < size; j++) {
-                int[] jNode = areas.get(j);
-                maps[jNode[0]][jNode[1]] = 1;
-                for (int k = j + 1; k < size; k++) {
-                    int[] kNode = areas.get(k);
-                    maps[kNode[0]][kNode[1]] = 1;
-                    bfs();
-                    maps[kNode[0]][kNode[1]] = 0;
-                }
-                maps[jNode[0]][jNode[1]] = 0;
-            }
-            maps[node[0]][node[1]] = 0;
-        }
+        buildWall(0, 0);
         System.out.println(answer);
+    }
+
+    public static void buildWall(int depth, int start) {
+        if (depth == 3) {
+            bfs();
+            return;
+        }
+        for (int i = start; i < emptySpaces.size(); i++) {
+            int[] space = emptySpaces.get(i);
+            maps[space[0]][space[1]] = 1;
+            buildWall(depth + 1, i + 1);
+            maps[space[0]][space[1]] = 0;
+        }
     }
 
     private static void bfs() {
@@ -69,7 +67,6 @@ public class Main {
                 }
             }
         }
-        boolean[][] visited = new boolean[n][m];
         while (!queue.isEmpty()) {
             int[] node = queue.poll();
             int y = node[0];
@@ -83,19 +80,18 @@ public class Main {
                 if (tmp[ny][nx] == 0) {
                     tmp[ny][nx] = 2;
                     queue.offer(new int[]{ny, nx});
-                    visited[ny][nx] = true;
                 }
             }
         }
 
-        int count = 0;
+        int safe = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 if (tmp[i][j] == 0) {
-                    count++;
+                    safe++;
                 }
             }
         }
-        answer = Math.max(answer, count);
+        answer = Math.max(answer, safe);
     }
 }
