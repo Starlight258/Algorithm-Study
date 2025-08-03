@@ -4,71 +4,81 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    static int n;
-    static char[][] map;
-    static boolean[][] visited;
-    static int[] dy = {-1, 0, 1, 0};
-    static int[] dx = {0, 1, 0, -1};
+    private static final int GREEN = 6;
+    private static final int RED = 17;
+    private static final int[] dy = {-1, 0, 1, 0};
+    private static final int[] dx = {0, 1, 0, -1};
+    
+    private static int n;
+    private static int[][] map;
+    private static boolean[][] visited;
 
-    static void dfs(int y, int x, char color) {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
+
+        map = new int[n][n];
+        visited = new boolean[n][n];
+
+        for (int i = 0; i < n; i++) {
+            String line = br.readLine();
+            for (int j = 0; j < n; j++) {
+                map[i][j] = line.charAt(j) - 'A';
+            }
+        }
+
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!visited[i][j]) {
+                    dfss(i, j);
+                    count++;
+                }
+            }
+        }
+
+        visited = new boolean[n][n];
+        int countWithRedAndGreen = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!visited[i][j]) {
+                    dfssWithRedAndGreen(i, j);
+                    countWithRedAndGreen++;
+                }
+            }
+        }
+        System.out.println(count + " " + countWithRedAndGreen);
+    }
+
+    private static void dfss(int y, int x) {
         visited[y][x] = true;
 
         for (int i = 0; i < 4; i++) {
             int ny = y + dy[i];
             int nx = x + dx[i];
-            if (ny < 0 || nx < 0 || ny >= n || nx >= n) {
+            if (ny < 0 || nx < 0 || ny >= n || nx >= n || visited[ny][nx]) {
                 continue;
             }
-            if (!visited[ny][nx] && map[ny][nx] == color) {
-                dfs(ny, nx, color);
+            if (map[y][x] == map[ny][nx]) {
+                dfss(ny, nx);
             }
         }
     }
 
+    private static void dfssWithRedAndGreen(int y, int x) {
+        visited[y][x] = true;
 
-    public static void main(String[] args) throws IOException {
-        // 1. 입력받기
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(br.readLine());
-        map = new char[n][n];
-        visited = new boolean[n][n];
-
-        for (int i = 0; i < n; i++) {
-            map[i] = br.readLine().toCharArray();
-        }
-
-        // 2. 적록색약이 아닌 사람이 봤을 때
-        int normal = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (!visited[i][j]) {
-                    dfs(i, j, map[i][j]);
-                    normal++;
-                }
+        for (int i = 0; i < 4; i++) {
+            int ny = y + dy[i];
+            int nx = x + dx[i];
+            if (ny < 0 || nx < 0 || ny >= n || nx >= n || visited[ny][nx]) {
+                continue;
+            }
+            if (map[y][x] == map[ny][nx] || (map[y][x] == GREEN && map[ny][nx] == RED) ||
+                    (map[y][x] == RED && map[ny][nx] == GREEN)) {
+                dfssWithRedAndGreen(ny, nx);
             }
         }
-
-        // 3. 적록색약인 사람이 봤을때
-        visited = new boolean[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (map[i][j] == 'G') {
-                    map[i][j] = 'R';
-                }
-            }
-        }
-
-        int abnormal = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (!visited[i][j]) {
-                    dfs(i, j, map[i][j]);
-                    abnormal++;
-                }
-            }
-        }
-
-        // 4. 결과 출력하기
-        System.out.println(normal + " " + abnormal);
     }
+
 }
