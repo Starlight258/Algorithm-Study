@@ -1,89 +1,73 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 
 public class Main {
 
-    private static final int[] dy = {1, -1, 0, 0, 0, 0};
-    private static final int[] dx = {0, 0, 1, -1, 0, 0};
-    private static final int[] dz = {0, 0, 0, 0, 1, -1};
+    static int M, N, H;
+    static int[][][] box;
+    static int[][][] dist;
+    static int[] dx = {1, -1, 0, 0, 0, 0};
+    static int[] dy = {0, 0, 1, -1, 0, 0};
+    static int[] dz = {0, 0, 0, 0, 1, -1};
 
-    private static int M;
-    private static int N;
-    private static int H;
-    private static int[][][] tomato;
-    private static boolean[][][] visited;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        M = sc.nextInt();
+        N = sc.nextInt();
+        H = sc.nextInt();
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        M = Integer.parseInt(st.nextToken());
-        N = Integer.parseInt(st.nextToken());
-        H = Integer.parseInt(st.nextToken());
-        tomato = new int[N][M][H];
-        visited = new boolean[N][M][H];
-        Queue<int[]> queue = new LinkedList<>();
+        box = new int[H][N][M];
+        dist = new int[H][N][M];
+        Queue<int[]> q = new LinkedList<>();
 
         for (int h = 0; h < H; h++) {
             for (int n = 0; n < N; n++) {
-                st = new StringTokenizer(br.readLine());
                 for (int m = 0; m < M; m++) {
-                    tomato[n][m][h] = Integer.parseInt(st.nextToken());
-                    if (tomato[n][m][h] == 1) {
-                        queue.offer(new int[]{h, n, m});
-                        visited[n][m][h] = true;
+                    box[h][n][m] = sc.nextInt();
+                    if (box[h][n][m] == 1) {
+                        q.add(new int[]{h, n, m});
+                    }
+                    if (box[h][n][m] == 0) {
+                        dist[h][n][m] = -1;
                     }
                 }
             }
         }
 
-        int days = bfs(queue);
-        if (isAllRipe()) {
-            System.out.println(days);
-        } else {
-            System.out.println(-1);
-        }
-    }
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int z = cur[0], x = cur[1], y = cur[2];
 
-    private static boolean isAllRipe() {
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                for (int k = 0; k < H; k++) {
-                    if (tomato[i][j][k] == 0) {
-                        return false;
+            for (int dir = 0; dir < 6; dir++) {
+                int nz = z + dz[dir];
+                int nx = x + dx[dir];
+                int ny = y + dy[dir];
+
+                if (nz < 0 || nz >= H || nx < 0 || nx >= N || ny < 0 || ny >= M) {
+                    continue;
+                }
+                if (dist[nz][nx][ny] != -1) {
+                    continue;
+                }
+                dist[nz][nx][ny] = dist[z][x][y] + 1;
+                q.add(new int[]{nz, nx, ny});
+            }
+        }
+
+        int answer = 0;
+        for (int h = 0; h < H; h++) {
+            for (int n = 0; n < N; n++) {
+                for (int m = 0; m < M; m++) {
+                    if (dist[h][n][m] == -1) {
+                        System.out.println(-1);
+                        return;
                     }
+                    answer = Math.max(answer, dist[h][n][m]);
                 }
             }
         }
-        return true;
-    }
 
-    private static int bfs(final Queue<int[]> queue) {
-        int day = -1;
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                int[] cur = queue.poll();
-                for (int d = 0; d < 6; d++) {
-                    int nh = cur[0] + dz[d];
-                    int ny = cur[1] + dy[d];
-                    int nx = cur[2] + dx[d];
-
-                    if (nh < 0 || ny < 0 || nx < 0 || nh >= H || ny >= N || nx >= M) {
-                        continue;
-                    }
-                    if (tomato[ny][nx][nh] == 0 && !visited[ny][nx][nh]) {
-                        visited[ny][nx][nh] = true;
-                        tomato[ny][nx][nh] = 1;
-                        queue.offer(new int[]{nh, ny, nx});
-                    }
-                }
-            }
-            day++;
-        }
-        return day;
+        System.out.println(answer);
     }
 }
