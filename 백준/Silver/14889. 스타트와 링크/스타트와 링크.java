@@ -1,57 +1,67 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    static int N;
-    static int[][] S;
-    static boolean[] selected;
-    static int answer = Integer.MAX_VALUE;
+
+    private static int n;
+    private static int answer = Integer.MAX_VALUE;
+    private static int[][] map;
+    private static boolean[] red;
+
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        S = new int[N][N];
-
-        for (int i = 0; i < N; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                S[i][j] = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(br.readLine());
+        map = new int[n][n];
+        red = new boolean[n];
+        StringTokenizer st;
+        for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < n; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        selected = new boolean[N];
-        dfs(0, 0);
+        start(0, 0);
         System.out.println(answer);
     }
 
-    static void dfs(int idx, int count) {
-        // N/2명 선택 완료 → 능력치 계산
-        if (count == N / 2) {
-            calculate();
+    private static void start(final int depth, final int count) {
+        if (count == n / 2) {
+            answer = Math.min(answer, calculateDiff());
             return;
         }
-        if (idx >= N) return;
+        if (depth == n) {
+            return;
+        }
 
-        // 선택
-        selected[idx] = true;
-        dfs(idx + 1, count + 1);
-
-        // 미선택
-        selected[idx] = false;
-        dfs(idx + 1, count);
+        red[depth] = true;
+        start(depth + 1, count + 1);
+        red[depth] = false;
+        start(depth + 1, count);
     }
 
-    static void calculate() {
-        int start = 0, link = 0;
-        for (int i = 0; i < N; i++) {
-            for (int j = i + 1; j < N; j++) {
-                if (selected[i] && selected[j]) {
-                    start += S[i][j] + S[j][i];
-                } else if (!selected[i] && !selected[j]) {
-                    link += S[i][j] + S[j][i];
+    private static int calculateDiff() {
+        int redScore = 0;
+        int blueScore = 0;
+        for (int i = 0; i < n; i++) {
+            boolean isRed = red[i];
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    continue;
+                }
+                if (isRed == red[j]) {
+                    if (isRed) {
+                        redScore += map[i][j];
+                    } else {
+                        blueScore += map[i][j];
+                    }
                 }
             }
         }
-        answer = Math.min(answer, Math.abs(start - link));
+        return Math.abs(redScore - blueScore);
     }
+
 }
