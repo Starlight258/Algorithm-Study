@@ -44,16 +44,13 @@ public class Main {
             }
             boolean isDirty = false;
             for (int i = 0; i < 4; i++) {
-                d = (d + 3) % 4;
-                int ny = ry + dy[d];
-                int nx = rx + dx[d];
+                int ny = ry + dy[i];
+                int nx = rx + dx[i];
                 if (ny < 0 || nx < 0 || ny >= n || nx >= m) {
                     continue;
                 }
                 if (map[ny][nx] == 0) {
                     isDirty = true;
-                    ry = ny;
-                    rx = nx;
                     break;
                 }
             }
@@ -65,6 +62,20 @@ public class Main {
                     break;
                 }
                 if (map[ry][rx] == 1) {
+                    break;
+                }
+                continue;
+            }
+            for (int i = 0; i < 4; i++) {
+                d = (d + 3) % 4;
+                int ny = ry + dy[d];
+                int nx = rx + dx[d];
+                if (ny < 0 || nx < 0 || ny >= n || nx >= m) {
+                    continue;
+                }
+                if (map[ny][nx] == 0) {
+                    ry = ny;
+                    rx = nx;
                     break;
                 }
             }
