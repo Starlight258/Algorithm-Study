@@ -30,7 +30,9 @@ public class Main {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                goAround(i, j, 0, 0);
+                visited[i][j] = true;
+                goAround(i, j, map[i][j], 1);
+                visited[i][j] = false;
                 checkMiddleTet(i, j);
             }
         }
