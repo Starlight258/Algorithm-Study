@@ -1,21 +1,21 @@
 import java.util.*;
+
 class Solution {
-    public int solution(int[] ct) {
-        //1. 정렬
-        Arrays.sort(ct);
-        //2. h-index 찾기
-        int h = ct[ct.length-1];
+    public int solution(int[] citations) {
+        int n = citations.length;
+        int h = n;
         while (h>0){
-            int count=0;
-            for (int i=0;i<ct.length;i++){
-                if (ct[i]>=h){
+            int count = 0;
+            for (int c:citations){
+                if (c>=h){
                     count++;
                 }
             }
-            if (count>=h) return h;
+            if (count>=h && n-count<=h){
+                return h;
+            }
             h--;
-         }
-        
-        return 0;
+        }
+        return h;
     }
 }
