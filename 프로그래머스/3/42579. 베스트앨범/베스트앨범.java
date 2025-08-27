@@ -8,13 +8,7 @@ class Solution {
         for (int i=0;i<genres.length;i++){
             String g = genres[i];
             gen.put(g, gen.getOrDefault(g, 0) + plays[i]);
-            if (songs.containsKey(g)){
-                List<int[]> s = songs.get(g);
-                s.add(new int[]{i,plays[i]});
-                songs.put(g, s);
-            } else {
-                songs.put(g, new ArrayList<>(List.of(new int[]{i,plays[i]})));           
-            }
+            songs.computeIfAbsent(g, k->new ArrayList<>()).add(new int[]{i,plays[i]});
         }
         // 인기 장르별로 정렬
         List<Map.Entry<String, Integer>> keys = new LinkedList<>(gen.entrySet());
@@ -26,14 +20,11 @@ class Solution {
             // 가장 조회수가 많은 노래 2개 조회
             List<int[]> song = songs.get(genre);
             Collections.sort(song, (s1,s2)-> Integer.compare(s2[1], s1[1]));
-            if (song.size()==1){
-                answer.add(song.get(0)[0]);
-            } else {
-                answer.add(song.get(0)[0]);
+            answer.add(song.get(0)[0]);
+            if (song.size()>1){
                 answer.add(song.get(1)[0]);
-            }
+            } 
         }
-        
         
         return answer.stream().mapToInt(x->x).toArray();
     }
