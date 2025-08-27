@@ -31,7 +31,7 @@ class Solution {
                 }
             }
             if (pq.isEmpty()){
-                curTime++;
+                curTime = jobs[idx][0];
             } else {
                 Job curJob = pq.poll();
                 curTime += curJob.time;
