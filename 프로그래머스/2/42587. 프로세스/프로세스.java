@@ -3,19 +3,18 @@ import java.util.*;
 class Solution {
     public int solution(int[] priorities, int location) {
         int answer = 0;
-        Queue<Integer> queue = new LinkedList<>();
-        PriorityQueue<Integer> pq = new PriorityQueue<>((p1,p2)-> p2-p1);
-        Map<Integer, Integer> mp = new HashMap<>();
+        Queue<Integer> queue = new ArrayDeque<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        
         for (int i=0;i<priorities.length;i++){
             queue.offer(i);
             pq.offer(priorities[i]);
-            mp.put(i, priorities[i]);
         }
         
         while (!queue.isEmpty()){
             int prio = pq.peek();
             int e = queue.poll();
-            if (mp.get(e) != prio){
+            if (priorities[e] != prio){
                 queue.offer(e);
             } else {
                 answer++;
