@@ -2,17 +2,22 @@ import java.util.*;
 
 class Solution {
     public int solution(int bridge_length, int weight, int[] truck_weights) {
-        int curTime = 0;
         Deque<Integer> bridge = new ArrayDeque<>();
         int total = 0;
-        for (int i=0;i<bridge_length;i++){
+        for (int i=0;i<bridge_length-1;i++){
             bridge.offer(0);
         }
-        int index = 0;
+        int curTime = 1;
+        int index = 1;
         int n = truck_weights.length;
-        while (index<n){
+        bridge.offerLast(truck_weights[0]);
+        total += truck_weights[0];
+        while (total!=0){
             curTime++;
             total -= bridge.pollFirst();
+            if (index==n){
+                continue;
+            }
             if (weight - total >= truck_weights[index]){
                 bridge.offerLast(truck_weights[index]);
                 total += truck_weights[index];
@@ -20,11 +25,6 @@ class Solution {
             } else {
                 bridge.offerLast(0);
             }
-        }
-        
-        while (!bridge.isEmpty() && total != 0){
-            curTime++;        
-            total -= bridge.pollFirst();
         }
         
         return curTime;
