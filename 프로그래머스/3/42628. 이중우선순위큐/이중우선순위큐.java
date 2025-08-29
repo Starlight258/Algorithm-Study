@@ -2,34 +2,37 @@ import java.util.*;
 
 class Solution {
     public int[] solution(String[] operations) {
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        PriorityQueue<Integer> pqReverse = new PriorityQueue<>(Collections.reverseOrder());
+        TreeMap<Integer, Integer> map = new TreeMap<>();
         for (String operation:operations){
             String[] splited = operation.split(" ");
             String command = splited[0];
             int number = Integer.parseInt(splited[1]);
             if (command.equals("I")){
-                pq.offer(number);
-                pqReverse.offer(number);
+                map.put(number, map.getOrDefault(number,0)+1);
             } else if (command.equals("D")){
-                if (pq.isEmpty()){
+                if (map.isEmpty()){
                     continue;
                 }
+                int key = 0;
                 if (number == 1){ // 최댓값 삭제
-                    int n = pqReverse.poll();
-                    pq.remove(n);
+                    key = map.lastKey();
+                    
                 } else {
-                    int n = pq.poll();
-                    pqReverse.remove(n);
+                    key = map.firstKey();
+                    
+                }
+                int count = map.get(key);
+                if (count==1){
+                    map.remove(key);
+                } else {
+                    map.put(key, count-1);
                 }
             }
         }
-        if (pq.isEmpty()){
+        if (map.isEmpty()){
             return new int[]{0,0};
         }
-        int max = pqReverse.poll();
-        int min = pq.poll();
         
-        return new int[]{max, min};
+        return new int[]{map.lastKey(), map.firstKey()};
     }
 }
