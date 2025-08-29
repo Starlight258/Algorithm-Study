@@ -3,19 +3,22 @@ import java.util.*;
 class Solution {
     public int solution(int[] A, int[] B) {
         int answer = 0;
-        Integer[] aBox = Arrays.stream(A).boxed().toArray(Integer[]::new);
-        Integer[] bBox = Arrays.stream(B).boxed().toArray(Integer[]::new);
-        Arrays.sort(aBox, Collections.reverseOrder());
-        Arrays.sort(bBox, Collections.reverseOrder());
+        Arrays.sort(A);
+        Arrays.sort(B);
         
+        int n = Math.min(A.length, B.length);
+        int aIndex = 0;
         int bIndex = 0;
-        for (int i=0;i<aBox.length;i++){
-            int a = aBox[i];
-            int b = bBox[bIndex];
+        while (aIndex<n && bIndex<n){
+            int a = A[aIndex];
+            int b = B[bIndex];
             if (a<b){
+                aIndex++;
                 bIndex++;
                 answer++;
-            } 
+            } else {
+                bIndex++;
+            }
         }
         return answer;
     }
