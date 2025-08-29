@@ -37,7 +37,7 @@ public class Main {
             int s = Integer.parseInt(st.nextToken());
             int e = Integer.parseInt(st.nextToken());
             int weight = Integer.parseInt(st.nextToken());
-            if (e > d) {
+            if (s > d || e > d) {
                 continue;
             }
             if (e - s <= weight) {
@@ -46,10 +46,10 @@ public class Main {
             pathes.get(s).add(new Path(e, weight));
         }
 
-        int[] dist = new int[10_001];
+        int[] dist = new int[d + 1];
         Arrays.fill(dist, INF);
         dist[0] = 0;
-        for (int i = 0; i <= d; i++) {
+        for (int i = 0; i < d; i++) {
             dist[i + 1] = Math.min(dist[i] + 1, dist[i + 1]);
 
             for (Path path : pathes.get(i)) {
