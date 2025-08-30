@@ -10,18 +10,20 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static class Node implements Comparable<Node> {
-        int edge;
-        int cost;
+    private static final int INF = 1_000_000_000;
 
-        public Node(final int edge, final int cost) {
-            this.edge = edge;
-            this.cost = cost;
+    static class Edge implements Comparable<Edge> {
+        int v;
+        int w;
+
+        public Edge(final int v, final int w) {
+            this.v = v;
+            this.w = w;
         }
 
         @Override
-        public int compareTo(final Node o) {
-            return Integer.compare(cost, o.cost);
+        public int compareTo(final Edge o) {
+            return this.w - o.w;
         }
     }
 
@@ -29,8 +31,7 @@ public class Main {
     private static int m;
     private static int[] dist;
     private static int[] prev;
-    private static List<List<Node>> nodes;
-    private static int INF = 1_000_000_000;
+    private static List<List<Edge>> edges;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -39,66 +40,69 @@ public class Main {
         prev = new int[n + 1];
         Arrays.fill(dist, INF);
         m = Integer.parseInt(br.readLine());
-        nodes = new ArrayList<>();
+        edges = new ArrayList<>();
         for (int i = 0; i <= n; i++) {
-            nodes.add(new ArrayList<>());
+            edges.add(new ArrayList<>());
         }
         StringTokenizer st;
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
-            int s = Integer.parseInt(st.nextToken());
-            int e = Integer.parseInt(st.nextToken());
-            int cost = Integer.parseInt(st.nextToken());
-            nodes.get(s).add(new Node(e, cost));
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            edges.get(u).add(new Edge(v, w));
         }
         st = new StringTokenizer(br.readLine());
         int start = Integer.parseInt(st.nextToken());
         int end = Integer.parseInt(st.nextToken());
 
-        dijkstraPsS(start);
+        dijkstra(start, end);
         System.out.println(dist[end]);
 
-        int curEdge = end;
-        List<Integer> path = new ArrayList<>();
-        while (curEdge != 0) {
-            path.add(curEdge);
-            curEdge = prev[curEdge];
+        showPath(end);
+    }
+
+    private static void showPath(final int end) {
+        List<Integer> paths = new ArrayList<>();
+        int c = end;
+        while (c != 0) {
+            paths.add(c);
+            c = prev[c];
         }
-        Collections.reverse(path);
-        System.out.println(path.size());
+        System.out.println(paths.size());
+        Collections.reverse(paths);
         StringBuilder sb = new StringBuilder();
-        for (Integer p : path) {
-            sb.append(p).append(" ");
+        for (Integer path : paths) {
+            sb.append(path).append(" ");
         }
         System.out.println(sb.toString().trim());
     }
 
-    private static void dijkstraPsS(final int start) {
+    private static void dijkstra(final int start, final int end) {
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
         dist[start] = 0;
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        pq.offer(new Node(start, 0));
+        pq.offer(new Edge(start, 0));
 
         while (!pq.isEmpty()) {
-            Node curNode = pq.poll();
-            int curEdge = curNode.edge;
-            if (dist[curEdge] != curNode.cost) {
+            Edge curEdge = pq.poll();
+            int curV = curEdge.v;
+            if (dist[curV] != curEdge.w) {
                 continue;
             }
-            for (Node next : nodes.get(curEdge)) {
-                int cost = dist[curEdge] + next.cost;
-                int nextEdge = next.edge;
-                if (dist[nextEdge] > cost) {
-                    dist[nextEdge] = cost;
-                    pq.offer(new Node(nextEdge, dist[nextEdge]));
-                    prev[nextEdge] = curEdge;
+            if (curV == end) {
+                break;
+            }
+            for (Edge nextEdge : edges.get(curV)) {
+                int curWeight = dist[curV] + nextEdge.w;
+                int nextV = nextEdge.v;
+                if (dist[nextV] > curWeight) {
+                    dist[nextV] = curWeight;
+                    pq.offer(new Edge(nextV, curWeight));
+                    prev[nextV] = curV;
                 }
             }
         }
 
     }
-
-    // 다익스트라
-    // int[] dist : INF
-    // if (dist[i] < dist[u]+w) dist[i] = dist[u]+w
 
 }
