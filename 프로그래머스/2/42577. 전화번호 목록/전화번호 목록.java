@@ -2,12 +2,16 @@ import java.util.*;
 
 class Solution {
     public boolean solution(String[] phoneBook) {
-        Arrays.sort(phoneBook);
-        for (int i=0;i<phoneBook.length-1;i++){
-            if (phoneBook[i+1].startsWith(phoneBook[i])){
-                return false;
+        Set<String> set = new HashSet<>(Arrays.asList(phoneBook));
+        
+        for (String phone:phoneBook){
+            for (int i=1;i<phone.length();i++){
+                if (set.contains(phone.substring(0, i))){
+                    return false;
+                }
             }
         }
+
         return true;
     }
     // startsWith -> O(n^2)
