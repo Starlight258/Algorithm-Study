@@ -1,18 +1,15 @@
 import java.util.*;
 
 class Solution {
-    public boolean solution(String[] phone_book) {
-        Map<String, Integer> mp = new HashMap<>();
-        for (String phone:phone_book){
-            mp.put(phone, 1);
-        }
-        for (String phone:phone_book){
-            for (int i=0;i<phone.length();i++){
-                if (mp.containsKey(phone.substring(0, i))){
-                    return false;
-                }
+    public boolean solution(String[] phoneBook) {
+        Arrays.sort(phoneBook);
+        for (int i=0;i<phoneBook.length-1;i++){
+            if (phoneBook[i+1].startsWith(phoneBook[i])){
+                return false;
             }
         }
         return true;
     }
+    // startsWith -> O(n^2)
+    // 문자열 정렬 -> book[i+1].startsWith(book[i]) -> return false; -> O(n)
 }
