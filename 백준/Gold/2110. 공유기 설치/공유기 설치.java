@@ -5,39 +5,48 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    private static int n;
+    private static int c;
+    private static int[] distances;
+
     public static void main(String[] args) throws IOException {
-        // 1. 입력받기
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken());
-        int c = Integer.parseInt(st.nextToken());
-        int[] houses = new int[n];
+        n = Integer.parseInt(st.nextToken());
+        c = Integer.parseInt(st.nextToken());
+        distances = new int[n];
         for (int i = 0; i < n; i++) {
-            houses[i] = Integer.parseInt(br.readLine());
+            distances[i] = Integer.parseInt(br.readLine());
         }
-        Arrays.sort(houses);
+        Arrays.sort(distances);
 
-        //2. 이진탐색 수행하기
-        int left = 1;
-        int right = houses[n - 1] - houses[0];
-        int answer = 0;
+        long left = 1;
+        long right = distances[distances.length-1];
+        long answer = 0;
         while (left <= right) {
-            int mid = (left + right) / 2;
-            int count = 1;
-            int prev = houses[0];
-            for (int i = 1; i < n; i++) {
-                if (houses[i] - prev >= mid) {
-                    count++;
-                    prev = houses[i];
-                }
-            }
-            if (count < c) {
-                right = mid - 1;
-            } else {
-                answer = Math.max(mid, answer);
+            long mid = (left + right) >>> 1;
+            if (checkDistance(mid) >= c) {
+                answer = mid;
                 left = mid + 1;
+            } else {
+                right = mid - 1;
             }
         }
+
         System.out.println(answer);
     }
+
+    private static long checkDistance(final long mid) {
+        long count = 1;
+        long prev = distances[0];
+        for (int distance : distances) {
+            if (distance - prev >= mid) {
+                count++;
+                prev = distance;
+            }
+        }
+        return count;
+    }
+
 }
