@@ -22,7 +22,7 @@ public class Main {
         Arrays.sort(distances);
 
         long left = 1;
-        long right = distances[distances.length-1];
+        long right = distances[distances.length - 1] - distances[0];
         long answer = 0;
         while (left <= right) {
             long mid = (left + right) >>> 1;
@@ -38,15 +38,18 @@ public class Main {
     }
 
     private static long checkDistance(final long mid) {
-        long count = 1;
-        long prev = distances[0];
-        for (int distance : distances) {
-            if (distance - prev >= mid) {
+        int count = 1;
+        int last = distances[0];
+        for (int i = 1; i < distances.length; i++) {
+            int distance = distances[i];
+            if (distance - last >= mid) {
                 count++;
-                prev = distance;
+                last = distance;
+                if (count >= c) {
+                    break;
+                }
             }
         }
         return count;
     }
-
 }
