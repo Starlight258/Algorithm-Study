@@ -4,32 +4,23 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
-        // 1. 입력받기
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
         int k = Integer.parseInt(st.nextToken());
-
-        // 2. 동전 저장하기
-        int[] coin = new int[n];
-        for (int i = 0; i < n; i++) {
-            coin[i] = Integer.parseInt(br.readLine());
-        }
-
-        // 3. dp 수행
+        int[] coins = new int[n];
         int[] dp = new int[k + 1];
+        for (int i = 0; i < n; i++) {
+            coins[i] = Integer.parseInt(br.readLine());
+        }
         dp[0] = 1;
-        
-        for (int i = 0; i < n; i++) { // 동전
-            for (int j = 1; j <= k; j++) { // 돈
-                if (coin[i] <= j) {
-                    dp[j] += dp[j - coin[i]];
-                }
+        for (int coin : coins) {
+            for (int i = coin; i <= k; i++) {
+                dp[i] += dp[i-coin];
             }
         }
-
-        //4. 정답 출력
         System.out.println(dp[k]);
     }
 }
