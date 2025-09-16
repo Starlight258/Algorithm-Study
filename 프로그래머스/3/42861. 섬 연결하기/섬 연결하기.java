@@ -2,52 +2,53 @@ import java.util.*;
 
 class Solution {
     
-    class Edge implements Comparable<Edge> {
+    public class Edge implements Comparable<Edge> {
         int from;
         int to;
-        int weight;
+        int cost;
         
-        public Edge(int from, int to, int weight){
+        Edge(int from, int to, int cost){
             this.from = from;
             this.to = to;
-            this.weight=weight;
+            this.cost = cost;
         }
         
         public int compareTo(final Edge o){
-            return this.weight - o.weight;
+            return this.cost - o.cost;
         }
     }
     
     public int solution(int n, int[][] costs) {
         int answer = 0;
         List<Edge> edges = new ArrayList<>();
-        for (int i=0;i<costs.length;i++){
-            edges.add(new Edge(costs[i][0], costs[i][1], costs[i][2]));
-            edges.add(new Edge(costs[i][1], costs[i][0], costs[i][2]));
+        for (int[] cost:costs){
+            edges.add(new Edge(cost[0], cost[1], cost[2]));
+            edges.add(new Edge(cost[1], cost[0], cost[2]));
         }
-        Collections.sort(edges);
-        int total = 0;
+        
         UnionFind unionFind = new UnionFind(n);
+        Collections.sort(edges);
+        
         for (Edge edge:edges){
             int from = edge.from;
             int to = edge.to;
+            
             if (!unionFind.isConnected(from, to)){
                 unionFind.union(from, to);
-                total += edge.weight;
+                answer += edge.cost;
             }
         }
-        
-        return total;
+        return answer;
     }
     
-    class UnionFind{
+    class UnionFind {
         
         int[] parent;
         
-        public UnionFind(int n){
-            parent = new int[n+1];
-            for (int i=1;i<=n;i++){
-                parent[i]=i;
+        UnionFind(int size){
+            this.parent = new int[size];
+            for (int i=0;i<size;i++){
+                parent[i] = i;
             }
         }
         
@@ -55,7 +56,8 @@ class Solution {
             if (parent[x]!=x){
                 return parent[x] = find(parent[x]);
             }
-            return parent[x];
+            
+            return x;
         }
         
         public boolean union(int x, int y){
@@ -64,12 +66,11 @@ class Solution {
             if (rootX == rootY){
                 return false;
             }
-            if (rootX != rootY){
-                if (rootX < rootY){
-                    parent[rootY] = rootX;
-                } else {
-                    parent[rootX] = rootY;
-                }
+            
+            if (rootX < rootY){
+                parent[rootY] = rootX;
+            } else {
+                parent[rootX] = rootY;
             }
             return true;
         }
@@ -78,5 +79,6 @@ class Solution {
             return find(x) == find(y);
         }
     }
-    // MST(최소 간선 트리)
+    // 모든 섬(노드) 연결 -> MST
+    // 크루스칼 : union find 
 }
