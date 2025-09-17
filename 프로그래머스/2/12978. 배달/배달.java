@@ -43,12 +43,13 @@ class Solution {
             int curNode = cur.node;
             int curCost = cur.cost;
             
+            if (dist[curNode] < curCost){
+                continue;
+            }
+            
             for (Edge next:edges.get(curNode)){
                 int nextNode = next.node;
                 int nextCost = next.cost;
-                if (dist[nextNode] <= nextCost){
-                    continue;
-                }
 
                 if (dist[nextNode] > dist[curNode] + nextCost){
                     dist[nextNode] = dist[curNode] + nextCost;
