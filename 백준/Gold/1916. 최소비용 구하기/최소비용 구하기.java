@@ -2,19 +2,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static class Node {
-        int idx;
-        int cost;
 
-        public Node(final int idx, final int cost) {
-            this.idx = idx;
-            this.cost = cost;
+    private static final int INF = (int) 1e9;
+
+    static class Edge implements Comparable<Edge> {
+
+        int node;
+        int weight;
+
+        public Edge(final int node, final int weight) {
+            this.node = node;
+            this.weight = weight;
+        }
+
+        @Override
+        public int compareTo(final Edge o) {
+            return this.weight - o.weight;
         }
     }
 
@@ -22,51 +32,48 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
         int m = Integer.parseInt(br.readLine());
-        List<List<Node>> list = new ArrayList<>();
-        for (int i = 0; i <= n; i++) {
-            list.add(new ArrayList<>());
-        }
 
+        List<List<Edge>> edges = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            edges.add(new ArrayList<>());
+        }
         StringTokenizer st;
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
             int cost = Integer.parseInt(st.nextToken());
-            list.get(start).add(new Node(end, cost));
+            edges.get(s).add(new Edge(e, cost));
         }
-
         st = new StringTokenizer(br.readLine());
         int start = Integer.parseInt(st.nextToken());
         int end = Integer.parseInt(st.nextToken());
 
-        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o.cost));
-        pq.offer(new Node(start, 0));
         int[] dist = new int[n + 1];
-        for (int i = 0; i <= n; i++) {
-            dist[i] = Integer.MAX_VALUE;
-        }
+        Arrays.fill(dist, INF);
+
         dist[start] = 0;
+        Queue<Edge> pq = new PriorityQueue<>();
+        pq.offer(new Edge(start, 0));
 
         while (!pq.isEmpty()) {
-            Node cur = pq.poll();
-            if (cur.idx == end) {
-                System.out.println(cur.cost);
-                return;
-            }
-            if (dist[cur.idx] < cur.cost) {
+            Edge edge = pq.poll();
+            int node = edge.node;
+            int weight = edge.weight;
+
+            if (dist[node] < weight) {
                 continue;
             }
-            for (int i = 0; i < list.get(cur.idx).size(); i++) {
-                Node next = list.get(cur.idx).get(i);
-                int cost = cur.cost + next.cost;
-                if (cost < dist[next.idx]) {
-                    dist[next.idx] = cost;
-                    pq.offer(new Node(next.idx, dist[next.idx]));
+            for (Edge next : edges.get(node)) {
+                int nextNode = next.node;
+                int nextWeight = next.weight;
+                if (dist[nextNode] > dist[node] + nextWeight) {
+                    dist[nextNode] = dist[node] + nextWeight;
+                    pq.offer(new Edge(nextNode, dist[nextNode]));
                 }
+
             }
         }
-
         System.out.println(dist[end]);
     }
 }
