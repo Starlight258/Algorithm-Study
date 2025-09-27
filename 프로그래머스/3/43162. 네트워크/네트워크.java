@@ -1,34 +1,40 @@
 import java.util.*;
 
 class Solution {
-    List<List<Integer>> list;
-    boolean[] visited;
-    void dfs(int e){
-        for (Integer l:list.get(e)){
-            if (!visited[l]){
-                visited[l] = true;
-                dfs(l);
-            }
+
+    static class UF {
+        int[] parent, rank;
+        UF(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) parent[i] = i;
+        }
+        int find(int x) {
+            if (parent[x] != x) parent[x] = find(parent[x]);
+            return parent[x];
+        }
+        void union(int x, int y) {
+            int rx = find(x), ry = find(y);
+            if (rx == ry) return;
+            if (rank[rx] < rank[ry]) parent[rx] = ry;
+            else if (rank[rx] > rank[ry]) parent[ry] = rx;
+            else { parent[ry] = rx; rank[rx]++; }
         }
     }
+
     public int solution(int n, int[][] computers) {
-        int answer = 0;
-        // 1. 원소별 인접리스트 저장하기
-        list = new ArrayList<>();
-        for (int i=0;i<computers.length;i++){
-            list.add(new ArrayList<>());
-            for (int j=0;j<computers[i].length;j++){
-                if (i!=j && computers[i][j]==1) list.get(i).add(j);
+        UF uf = new UF(n);
+
+        // 인접행렬: 자기 자신 1 포함. 대칭이므로 i<j만 보면 충분.
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (computers[i][j] == 1) uf.union(i, j);
             }
         }
-        //2. dfs 수행
-        visited = new boolean[computers.length];
-        for (int i=0;i<computers.length;i++){
-            if (!visited[i]) {
-                dfs(i);
-                answer++;
-            }
-        }
-        return answer;
+
+        // 각 노드의 루트를 세어 네트워크 개수 계산
+        Set<Integer> roots = new HashSet<>();
+        for (int i = 0; i < n; i++) roots.add(uf.find(i));
+        return roots.size();
     }
 }
