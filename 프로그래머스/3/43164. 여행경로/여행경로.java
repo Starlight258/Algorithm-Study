@@ -2,24 +2,28 @@ import java.util.*;
 
 class Solution {
     public String[] solution(String[][] tickets) {
-        Map<String, PriorityQueue<String>> g = new HashMap<>();
-        for (String[] t:tickets){
-            g.computeIfAbsent(t[0], k->new PriorityQueue<>()).offer(t[1]);
+        List<String> answer = new ArrayList<>();
+        Map<String, PriorityQueue<String>> map = new HashMap<>();
+        for (String[] ticket:tickets){
+            map.computeIfAbsent(ticket[0], k -> new PriorityQueue<String>()).offer(ticket[1]);
         }
-        Deque<String> st = new ArrayDeque<>();
-        List<String> route = new ArrayList<>();
-        st.push("ICN");
         
-        while(!st.isEmpty()){
-            String cur = st.peek();
-            PriorityQueue<String> pq = g.get(cur);
-            if (pq != null && !pq.isEmpty()){
-                st.push(pq.poll());
+        Stack<String> stk = new Stack<>();
+        stk.push("ICN");
+        while (!stk.isEmpty()){
+            String cur = stk.peek();
+            PriorityQueue<String> queue = map.get(cur);
+            if (queue != null && !queue.isEmpty()){
+                stk.push(queue.poll());
             } else {
-                route.add(st.pop());
+                answer.add(stk.pop());
             }
         }
-        Collections.reverse(route);
-        return route.toArray(new String[0]);
+        
+        Collections.reverse(answer);
+        return answer.toArray(String[]::new);
     }
+    // 큐로 진행, 우선순위 큐 : Map<String, PriorityQueue<String>> map
+    // 큐에 없을 때까지 진행
+    // 모든 항공권을 사용해야하므로 Stack 먼저 집어넣기 Stack<String>
 }
