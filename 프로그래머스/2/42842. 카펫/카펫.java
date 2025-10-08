@@ -1,13 +1,18 @@
 class Solution {
     public int[] solution(int brown, int yellow) {
-        //1. 갈색 블록으로 경우의 수 구하기
-        int sum = (brown+4)/2;
-        for (int a=1;a<=sum/2;a++){
-            int b = sum - a;
-            if ((a-2) * (b-2) == yellow){
-                return new int[]{b,a};
+        int[] answer = {};
+        int sum = (brown + 4) / 2; // x+y
+        for (int y=2;y<sum;y++){
+            int x = sum - y;
+            if ((y-2) * (x-2) == yellow){
+                return new int[]{x,y};
             }
         }
-        return new int[]{0,0};
+        
+        return answer;
     }
+    // 가로, 세로 : x, y
+    // (b-2) * (y-2)
+    // brown : x+x+y+y-4 = 2x + 2y -4
+    // yellow = (x-2) * (y-2) 
 }
