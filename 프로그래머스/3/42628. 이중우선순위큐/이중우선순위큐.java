@@ -2,37 +2,37 @@ import java.util.*;
 
 class Solution {
     public int[] solution(String[] operations) {
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        for (String operation:operations){
-            String[] splited = operation.split(" ");
-            String command = splited[0];
-            int number = Integer.parseInt(splited[1]);
-            if (command.equals("I")){
-                map.put(number, map.getOrDefault(number,0)+1);
-            } else if (command.equals("D")){
-                if (map.isEmpty()){
-                    continue;
-                }
-                int key = 0;
-                if (number == 1){ // 최댓값 삭제
-                    key = map.lastKey();
-                    
-                } else {
-                    key = map.firstKey();
-                    
-                }
-                int count = map.get(key);
-                if (count==1){
-                    map.remove(key);
-                } else {
-                    map.put(key, count-1);
-                }
+        TreeMap<Integer, Integer> tmp = new TreeMap<>();
+        for (String op:operations){
+            String[] ar = op.split(" ");
+            String command = ar[0];
+            Integer number = Integer.parseInt(ar[1]);
+            switch (command){
+                case "I" : 
+                    tmp.put(number, tmp.getOrDefault(number, 0)+1);
+                    break;
+                case "D":
+                    if (tmp.isEmpty()){
+                        continue;
+                    }
+                    int key;
+                    if (number==1){
+                        key = tmp.lastKey();
+                    } else {
+                        key = tmp.firstKey();
+                    }
+                    int count = tmp.getOrDefault(key, 0);
+                    if (count==1){
+                        tmp.remove(key);
+                    } else {
+                        tmp.put(key, tmp.get(key)-1);
+                    } 
+                    break;
             }
         }
-        if (map.isEmpty()){
+        if (tmp.isEmpty()){
             return new int[]{0,0};
         }
-        
-        return new int[]{map.lastKey(), map.firstKey()};
+        return new int[]{tmp.lastKey(), tmp.firstKey()};
     }
 }
