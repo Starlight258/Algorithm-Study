@@ -1,61 +1,85 @@
 import java.util.*;
 
 class Solution {
-    
-    final int dy[] = {-1,0,1,0};
-    final int dx[] = {0,1,0,-1};
+    private int[] dy = {-1,0,1,0};
+    private int[] dx = {0,1,0,-1};
+    private char[][] p;
     
     public int[] solution(String[][] places) {
-        List<Integer> answer = new ArrayList<>();
-        for (String[] place:places){
-            answer.add(isValid(place) ? 1:0);
-        }
-        return answer.stream().mapToInt(i->i).toArray();
-    }
-    
-    private boolean isValid(String[] place){
-        for (int i=0;i<5;i++){
-            for (int j=0;j<5;j++){
-                if (place[i].charAt(j)=='P'){
-                    if (bfs(place, i, j)){
-                        return false;
+        int n = places.length;
+        int[] answer = new int[n];
+        // 배열
+        p = new char[5][5];
+        
+        for (int c=0;c<n;c++){
+             for (int i=0;i<5;i++){
+                for (int j=0;j<5;j++){
+                    p[i][j] = places[c][i].charAt(j);
+                }
+            }
+            
+            boolean isZero = false;
+            for (int i=0;i<5;i++){
+                for (int j=0;j<5;j++){
+                    if (p[i][j]=='P'){
+                        if (!bfs(i, j)){
+                            isZero = true;
+                            break;
+                        }
+                    }
+                    if (isZero){
+                        break;
                     }
                 }
             }
+            if (isZero){
+                answer[c] = 0;
+            } else {
+                answer[c] = 1;
+            }
         }
-        return true;
+       
+        
+        return answer;
     }
     
-    private boolean bfs(String[] place, int y, int x){
-        Queue<int[]> q = new LinkedList<>();
-        int n = place.length;
-        int m = place[0].length();
-        int[][] visited = new int[n][m];
-        q.offer(new int[]{y, x, 0});
-        visited[y][x] = 1;
+    private boolean bfs(int sy, int sx){
         
-        while (!q.isEmpty()){
-            int[] cur = q.poll();
-            y = cur[0];
-            x = cur[1];
-            int distance = cur[2];
-            if (distance>2) continue;
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{sy,sx});
+    
+        int[][] visited = new int[5][5];
+        visited[sy][sx] = 1;
+        
+        // bfs
+        while (!queue.isEmpty()){
+            int[] node = queue.poll();
+            int y = node[0];
+            int x = node[1];
+            if (visited[y][x]>2){
+                continue;
+            }
             
             for (int i=0;i<4;i++){
                 int ny = y + dy[i];
                 int nx = x + dx[i];
-                if (ny<0||nx<0||ny>=n||nx>=m || visited[ny][nx]>0) continue;
-                if (place[ny].charAt(nx) == 'P'){
-                    if (distance<2){
-                        return true;
-                    } 
-                     continue;
+                
+                if (ny<0||nx<0||ny>=5||nx>=5){
+                    continue;
                 }
-                if (place[ny].charAt(nx)=='X') continue;    
-                q.offer(new int[]{ny, nx, distance+1});
-                visited[ny][nx] = 1;
+                if (visited[ny][nx]>0 || p[ny][nx]=='X'){
+                    continue;
+                }
+                if (p[ny][nx]=='P'){
+                    return false; // 거리두기 안지킴
+                }
+                visited[ny][nx] = visited[y][x]+1;
+                queue.offer(new int[]{ny,nx});
             }
         }
-        return false;
+        return true;
     }
+    // 모든 좌표 bfs
+    // 빈 테이블로만 이동 가능
+    // 응시자마다 돌아가면서 순회 -> 거리 2 초과시 종료 -> 찾으면 0
 }
