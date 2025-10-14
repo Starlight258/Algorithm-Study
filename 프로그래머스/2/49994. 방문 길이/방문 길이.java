@@ -1,9 +1,12 @@
+import java.util.*;
+
 class Solution {
     
     private static final int[] dy = {-1,0,1,0};
     private static final int[] dx = {0,1,0,-1};
     
     private boolean[][][] visited;
+    private final Map<Character, Integer> map = Map.of('U', 2, 'D', 0, 'L',3,'R',1);
     
     public int solution(String dirs) {
         int answer = 0;
@@ -11,27 +14,11 @@ class Solution {
         int x = 5;
         visited = new boolean[11][11][4];
         for (char dir:dirs.toCharArray()){
-            int ny = y, nx = x, d=0;
-            if (dir == 'U'){
-                d = 2;
-                ny += dy[2];
-                nx += dx[2];
-            }
-            if (dir == 'D'){
-                d = 0;
-                ny += dy[0];
-                nx += dx[0];
-            }
-            if (dir == 'L'){
-                d = 3;
-                ny += dy[3];
-                nx += dx[3];
-            }
-            if (dir == 'R'){
-                d = 1;
-                ny += dy[1];
-                nx += dx[1];
-            }
+            int ny = y, nx = x;
+            int d = map.get(dir);
+            ny += dy[d];
+            nx += dx[d];
+            
             if (ny<0||nx<0||ny>10||nx>10){
                 continue;
             } 
