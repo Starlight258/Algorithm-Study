@@ -1,49 +1,55 @@
 class Solution {
-    final int[] dy = {-1,0,1,0};
-    final int[] dx = {0,1,0,-1};
+    
+    private static final int[] dy = {-1,0,1,0};
+    private static final int[] dx = {0,1,0,-1};
+    
+    private boolean[][][] visited;
+    
     public int solution(String dirs) {
         int answer = 0;
-        int y = 5, x = 5;
-        boolean[][][] visited = new boolean[11][11][4];
+        int y = 5;
+        int x = 5;
+        visited = new boolean[11][11][4];
         for (char dir:dirs.toCharArray()){
+            int ny = y, nx = x, d=0;
             if (dir == 'U'){
-                int ny = y+1;
-                if (ny<0||ny>10) continue;
-                y = ny;
-                if (visited[y][x][0] || visited[y-1][x][1]) continue;
-                visited[y][x][0] = true;
-                visited[y-1][x][1] = true;
-                answer++;
+                d = 2;
+                ny += dy[2];
+                nx += dx[2];
+            }
+            if (dir == 'D'){
+                d = 0;
+                ny += dy[0];
+                nx += dx[0];
+            }
+            if (dir == 'L'){
+                d = 3;
+                ny += dy[3];
+                nx += dx[3];
+            }
+            if (dir == 'R'){
+                d = 1;
+                ny += dy[1];
+                nx += dx[1];
+            }
+            if (ny<0||nx<0||ny>10||nx>10){
+                continue;
             } 
-            if (dir=='D'){
-                int ny = y-1;
-                if (ny<0||ny>10) continue;
-                y = ny;
-                if (visited[y][x][1] || visited[y+1][x][0]) continue;
-                 visited[y][x][1] = true;
-                visited[y+1][x][0] = true;
+            if (!(visited[y][x][d] || visited[ny][nx][nextDir(d)])){
                 answer++;
             }
-            if (dir=='L'){
-                int nx = x-1;
-                if (nx<0||nx>10) continue;
-                x = nx;
-                if (visited[y][x][2] || visited[y][x+1][3]) continue;
-                visited[y][x][2] = true;
-                visited[y][x+1][3] = true;
-                answer++;
-            }
-            if (dir=='R'){
-                int nx = x+1;
-                if (nx<0||nx>10) continue;
-                x = nx;
-                if (visited[y][x][3] || visited[y][x-1][2]) continue;
-                visited[y][x][3] = true;
-                 visited[y][x-1][2] = true;
-                answer++;
-            }
+            visited[y][x][d] = true;
+            y = ny;
+            x = nx;
         }
         
         return answer;
     }
+    
+    private int nextDir(int dir){
+        return (dir + 2) % 4;
+    }
+    // 방문배열 : visited[y][x][방향]
+    // 방향: 0(위), 1(오른), 2(아래), 3(왼)
+    // 상하좌우 이동, 넘어갈 경우 stop
 }
