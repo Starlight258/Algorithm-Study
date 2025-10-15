@@ -1,29 +1,43 @@
 import java.util.*;
+
 class Solution {
-    int dy[]={-1,0,1,0};
-    int dx[]={0,1,0,-1};
+    
+    private static int[] dy = {-1,0,1,0};
+    private static int[] dx = {0,1,0,-1};
+    
     public int solution(int[][] maps) {
-        int answer = 0;
-        int[][] visited = new int[maps.length][maps[0].length];
-        Queue<int[]> q = new LinkedList<>();
+        Deque<int[]> q = new ArrayDeque<>();
         q.offer(new int[]{0,0});
+        int maxY = maps.length;
+        int maxX = maps[0].length;
+        int[][] visited = new int[maxY][maxX];
         visited[0][0] = 1;
-        while(!q.isEmpty()){
-            int[] cur = q.poll();
-            int y = cur[0];
-            int x = cur[1];
-            for (int i=0;i<4;i++){
-                int ny = y+dy[i];
-                int nx = x+dx[i];
-                if(ny<0||nx<0||ny>=maps.length||nx>=maps[0].length) continue;
-                if (visited[ny][nx]==0 && maps[ny][nx]==1){
-                    visited[ny][nx] = visited[y][x]+1;
-                    q.offer(new int[]{ny, nx});
-                }
-            }
-            answer = visited[maps.length-1][maps[0].length-1];
-            answer= answer==0?-1:answer;
+        if (maps[0][0] == 0){
+            return -1;
         }
-        return answer;
+        
+        while (!q.isEmpty()){
+            int[] node = q.poll();
+            int y = node[0];
+            int x = node[1];
+            if (y==maxY-1 && x==maxX-1){
+                break;
+            }
+            
+            for (int i=0;i<4;i++){
+                int ny = y + dy[i];
+                int nx = x + dx[i];
+                if (ny<0||nx<0||ny>=maxY||nx>=maxX){
+                    continue;
+                }
+                if (visited[ny][nx] > 0 || maps[ny][nx] == 0){
+                    continue;
+                }
+                visited[ny][nx] = visited[y][x]+1;
+                q.offer(new int[]{ny, nx});
+            }
+        }
+        
+        return visited[maxY-1][maxX-1] == 0 ? -1 : visited[maxY-1][maxX-1];
     }
 }
