@@ -1,17 +1,29 @@
 class Solution {
-    int answer = 0;
-    void dfs(int depth, int now, int[] numbers, int target){
-        if (depth==numbers.length){
-            if (target==now) answer++;
+    
+    private int n;
+    private boolean[] visited;
+    private int answer = 0;
+    
+    public int solution(int[] numbers, int target) {
+        n = numbers.length;
+        visited = new boolean[n];
+        dfs(-1, 0, numbers, target);
+        
+        return answer;
+    }
+    
+    // 완전탐색
+    private void dfs(int index, int sum, int[] numbers, int target){
+        if (index == n-1){
+            if (sum == target){
+                answer++;
+            }
             return;
         }
-        // + 선택
-        dfs(depth+1, now+numbers[depth], numbers, target);
-        // - 선택
-        dfs(depth+1, now-numbers[depth], numbers, target);
-    }
-    public int solution(int[] numbers, int target) {
-        dfs(0, 0, numbers, target);
-        return answer;
+        
+        int next = index+1;
+        dfs(next, sum + numbers[next], numbers, target);
+        dfs(next, sum - numbers[next], numbers, target);
+        visited[next] = true;
     }
 }
