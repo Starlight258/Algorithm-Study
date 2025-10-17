@@ -1,52 +1,70 @@
 import java.util.*;
-
 class Solution {
-    static int[] dy = {-1,0,1,0};
-    static int[] dx = {0,1,0,-1};
-    static int n=0, m=0;
     
-    private static int bfs(String[] maps, int[] start, int[] end){
-        int y = start[0], x = start[1];
-        Queue<int[]> q = new LinkedList<>();
-        q.offer(new int[]{y ,x});
-        int[][] visited = new int[n][m];
+    private static int[] dy = {-1,0,1,0};
+    private static int[] dx = {0,1,0,-1};
+    
+    private int[][] visited;
+    private int n = 0;
+    private int m = 0;
+    private String[] mapData;  // 이름 변경
+    
+    public int solution(String[] maps) {
+        n = maps.length;
+        m = maps[0].length();
+        visited = new int[n][m];
+        this.mapData = maps;  // 올바른 할당
+        
+        // S 위치 찾기
+        int startY = 0, startX = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (mapData[i].charAt(j) == 'S') {
+                    startY = i;
+                    startX = j;
+                }
+            }
+        }
+        
+        visited[startY][startX] = 1;
+        int[] ret = bfs(startY, startX, 'L');
+        int leverDist = ret[2];  // 거리는 인덱스 2
+        if (leverDist == -1){
+            return -1;
+        }
+        
+        visited = new int[n][m];
+        int y = ret[0];
+        int x = ret[1];
         visited[y][x] = 1;
+        int distance = bfs(y, x, 'E')[2];
+        
+        if (distance == -1) return -1;
+        
+        return leverDist + distance;
+    }
+    
+    private int[] bfs(int y, int x, char target){
+        Queue<int[]> q = new ArrayDeque<>();
+        q.offer(new int[]{y,x});
         
         while (!q.isEmpty()){
-            int[] cur = q.poll();
-            y = cur[0]; x = cur[1];
-            if (y == end[0] && x == end[1]){
-                return visited[y][x];
-            }
+            int[] node = q.poll();
+            y = node[0];
+            x = node[1];
             for (int i=0;i<4;i++){
                 int ny = y + dy[i];
                 int nx = x + dx[i];
                 if (ny<0||nx<0||ny>=n||nx>=m) continue;
-                if (maps[ny].charAt(nx) == 'X' || visited[ny][nx]>0) continue;
-                q.add(new int[]{ny, nx});
-                visited[ny][nx] = visited[y][x]+1;
-            }
-        }
-        return -1;
-    }
-    public int solution(String[] maps) {
-        int answer = 0;
-        int[] start = {}, end = {}, lev = {};
-        n = maps.length; m = maps[0].length();
-        for (int i=0;i<n;i++){
-            for (int j=0;j<m;j++){
-                if (maps[i].charAt(j) == 'S'){
-                    start = new int[]{i, j};
-                } else if (maps[i].charAt(j) == 'E'){
-                    end = new int[]{i, j};
-                } else if (maps[i].charAt(j) == 'L'){
-                    lev = new int[]{i, j};
+                if (visited[ny][nx]==0 && mapData[ny].charAt(nx)!='X'){
+                    if (mapData[ny].charAt(nx) == target){
+                        return new int[]{ny, nx, visited[y][x]};  // visited[y][x]가 현재까지 거리
+                    }
+                    q.offer(new int[]{ny, nx});
+                    visited[ny][nx] = visited[y][x]+1;
                 }
             }
         }
-        int a1 = bfs(maps, start, lev);
-        int a2 = bfs(maps, lev, end);
-        if (a1 == -1 || a2 == -1) return -1;
-        return a1 + a2 - 2;
+        return new int[]{-1, -1, -1};        
     }
 }
