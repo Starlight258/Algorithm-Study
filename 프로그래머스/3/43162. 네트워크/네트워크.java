@@ -1,54 +1,26 @@
-import java.util.*;
-
 class Solution {
-    
-    class UF {
-        
-        int[] parent;
-        
-        UF (int n){
-            parent = new int[n];
-            for (int i=0;i<n;i++){
-                parent[i] = i;
-            }
-        }
-        
-        public void union(int a, int b){
-            int pa = find(a);
-            int pb = find(b);
-            if (pa != pb){
-                if (pa<pb){
-                    parent[pb] = pa;
-                } else {
-                    parent[pa] = pb;
-                }
-            }
-        }
-        
-        private int find(int node){
-            if (parent[node]!=node){
-                return parent[node] = find(parent[node]);
-            }
-            
-            return node;
-        }
-    }
+    private boolean[] visited;
     public int solution(int n, int[][] computers) {
         int answer = 0;
-        UF uf = new UF(n);
+        visited = new boolean[n];
         for (int i=0;i<n;i++){
-            for (int j=0;j<n;j++){
-                if (computers[i][j]==1){
-                     uf.union(i, j);
-                }
+            if (!visited[i]){
+                dfs(i, computers, n);
+                answer++;
             }
         }
-                
-        Set<Integer> set = new HashSet<>();
-        for (int i=0;i<n;i++){
-            set.add(uf.find(i));
-        }
-        
-        return set.size();
+        return answer;
     }
+    
+    void dfs(int node, int[][] computers, int n){
+        for (int i=0;i<n;i++){
+            int computer =  computers[node][i];
+            if (computer==0 || visited[i]){
+                continue;
+            } 
+            visited[i] = true;
+            dfs(i, computers, n);
+        }
+    }
+    // dfs로 풀기
 }
