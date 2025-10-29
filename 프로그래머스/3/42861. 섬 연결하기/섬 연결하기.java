@@ -2,83 +2,68 @@ import java.util.*;
 
 class Solution {
     
-    public class Edge implements Comparable<Edge> {
+    class Node {
         int from;
         int to;
-        int cost;
-        
-        Edge(int from, int to, int cost){
+        int weight;
+        Node(int from, int to, int weight){
             this.from = from;
             this.to = to;
-            this.cost = cost;
-        }
-        
-        public int compareTo(final Edge o){
-            return this.cost - o.cost;
+            this.weight = weight;
         }
     }
     
     public int solution(int n, int[][] costs) {
         int answer = 0;
-        List<Edge> edges = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
         for (int[] cost:costs){
-            edges.add(new Edge(cost[0], cost[1], cost[2]));
-            edges.add(new Edge(cost[1], cost[0], cost[2]));
+            nodes.add(new Node(cost[0], cost[1], cost[2]));
+            nodes.add(new Node(cost[1], cost[0], cost[2]));
         }
-        
-        UnionFind unionFind = new UnionFind(n);
-        Collections.sort(edges);
-        
-        for (Edge edge:edges){
-            int from = edge.from;
-            int to = edge.to;
-            
-            if (!unionFind.isConnected(from, to)){
-                unionFind.union(from, to);
-                answer += edge.cost;
+        Collections.sort(nodes, (n1, n2)-> n1.weight - n2.weight);
+        UF uf = new UF(n);
+        for (Node node:nodes){
+            int a = node.from;
+            int b = node.to;
+            if (!uf.isConnected(a, b)){
+                uf.union(a, b);
+                answer += node.weight;
             }
         }
+        
         return answer;
     }
     
-    class UnionFind {
-        
+    class UF{
         int[] parent;
+        UF (int n){
+            parent = new int[n];
+            for (int i=0;i<n;i++) parent[i] = i;
+        }
         
-        UnionFind(int size){
-            this.parent = new int[size];
-            for (int i=0;i<size;i++){
-                parent[i] = i;
+        public void union(int a, int b){
+            int rootA = find(a);
+            int rootB = find(b);
+            if (rootA != rootB){
+                if (rootA<rootB){
+                    parent[rootB] = rootA;
+                } else {
+                    parent[rootA] = rootB;
+                }
             }
         }
         
-        public int find(int x){
-            if (parent[x]!=x){
-                return parent[x] = find(parent[x]);
+        public int find(int node){
+            if (parent[node]==node){
+                return node;
             }
-            
-            return x;
+            return parent[node] = find(parent[node]);
         }
         
-        public boolean union(int x, int y){
-            int rootX = find(x);
-            int rootY = find(y);
-            if (rootX == rootY){
-                return false;
-            }
-            
-            if (rootX < rootY){
-                parent[rootY] = rootX;
-            } else {
-                parent[rootX] = rootY;
-            }
-            return true;
-        }
-        
-        public boolean isConnected(int x, int y){
-            return find(x) == find(y);
+        public boolean isConnected(int a, int b){
+            int rootA = find(a);
+            int rootB = find(b);
+            return rootA == rootB;
         }
     }
-    // 모든 섬(노드) 연결 -> MST
-    // 크루스칼 : union find 
 }
