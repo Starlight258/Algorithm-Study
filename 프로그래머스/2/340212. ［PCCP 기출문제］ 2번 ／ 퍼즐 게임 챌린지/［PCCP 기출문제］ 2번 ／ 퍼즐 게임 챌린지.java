@@ -17,7 +17,7 @@ class Solution {
                 left = mid+1;
             }
         }
-        return (int) right+1;
+        return (int) answer;
     }
     private boolean calculate(long level, int[] diffs, int[] times, long limit){
         int prevTime = 0;
