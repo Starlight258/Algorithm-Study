@@ -1,34 +1,48 @@
+import java.util.*;
+
 class Solution {
-    public int solution(int[] diffs, int[] times, long limit) {
-        int answer = Integer.MAX_VALUE;
-        int[] prefix = new int[diffs.length+1];
-        for (int i=0;i<times.length;i++){
-            prefix[i+1] = prefix[i] + times[i]; 
-        }
-        
-        // 이진탐색
-        int left = 1; int right = 100_000;
-        while (left<=right){
-            int mid = (left + right)/2;
-            if (calculateTime(diffs, prefix, limit, mid)){
-                right = mid-1; // 최소시간 구하기
-                answer = Math.min(answer, mid);
-            } else left = mid+1;
-        }
-        return answer;
-    }
     
-    private boolean calculateTime(int[] diffs, int[] prefix, long limit, int level){
+    private long answer = Long.MAX_VALUE;
+
+    public int solution(int[] diffs, int[] times, long limit) {
+        long left = 1;
+        long right = 100_000;
+        
+        while (left<=right){
+            long mid =(right-left)/2 + left;
+            boolean canCalculate = calculate(mid, diffs, times, limit);
+            if (canCalculate){
+                right = mid-1;
+            } else {
+                left = mid+1;
+            }
+        }
+        return (int) right+1;
+    }
+    private boolean calculate(long level, int[] diffs, int[] times, long limit){
+        int prevTime = 0;
         long total = 0;
         for (int i=0;i<diffs.length;i++){
             int diff = diffs[i];
-            if (diff<=level){
-                total += prefix[i+1] - prefix[i];
+            int curTime = times[i];
+            if (level >= diff){
+                total += curTime;
             } else {
-                if (i==0) total += (diff-level) * prefix[i+1] + prefix[i+1];
-                else total += (diff-level) * (prefix[i+1]-prefix[i-1]) + (prefix[i+1]-prefix[i]);
+                total += (diff - level) * (curTime + prevTime) + curTime;         
             }
+            prevTime = curTime;
         }
-        return total <= limit;
+        if (total <= limit){
+            answer = Math.min(answer, level);
+            return true;
+        }
+        return false; // limit 넘은 경우
     }
+    // diff <= level : time_cur만큼의 시간 사용
+    // diff > level : (diff - level) * (time_cur +time_prev) + time_cur
+    
+    // (3-2) * (2+4) + 2
+    // (3-2) * (2+4) + 2 = 8
+    // (3-3) + 2 = 2;
+    // 범위가 너무 큰데,, 설마 이분탐색은 아니겠지?
 }
