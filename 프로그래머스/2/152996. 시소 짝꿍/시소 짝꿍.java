@@ -12,16 +12,16 @@ class Solution {
                 answer+=mp.get(w);
             }
             // 1:1/2
-            if (w%2==0 && mp.containsKey(w/2)){
-                answer+=mp.get(w/2);
+            if (w%2==0){
+                answer+=mp.getOrDefault(w/2, 0);
             }
             // 1:2/3
-            if (w%3==0 && mp.containsKey(w/3*2)){
-                answer+=mp.get(w/3*2);
+            if (w%3==0){
+                answer+=mp.getOrDefault(w/3*2, 0);
             }
             // 1:3/4
-            if (w%4==0 && mp.containsKey(w/4*3)){
-                answer+=mp.get(w/4*3);
+            if (w%4==0){
+                answer+=mp.getOrDefault(w/4*3, 0);
             }
             mp.put(w, mp.getOrDefault(w,0)+1);
         }
