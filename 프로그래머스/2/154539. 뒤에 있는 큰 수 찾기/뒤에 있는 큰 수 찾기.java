@@ -1,30 +1,22 @@
 import java.util.*;
 
 class Solution {
-    class Node{
-        int index;
-        int number;
-        
-        Node (int index, int number){
-            this.index = index;
-            this.number = number;
-        }
-    }
+
     public int[] solution(int[] numbers) {
         int n = numbers.length;
         int[] answer = new int[n];
         Arrays.fill(answer, -1);
         // 스택 저장
-        Stack<Node> stk = new Stack<>();
+        Stack<Integer> stk = new Stack<>();
         
         // 순회하면서 뒷 큰수 구하기
         for (int i=0;i<n;i++){
             int cur = numbers[i];
-            while (!stk.isEmpty() && stk.peek().number < cur){
-                Node node = stk.pop();
-                answer[node.index] = cur;
+            while (!stk.isEmpty() && numbers[stk.peek()] < cur){
+                int index = stk.pop();
+                answer[index] = cur;
             }
-            stk.push(new Node(i, cur));
+            stk.push(i);
         }
         
         return answer;
