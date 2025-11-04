@@ -2,7 +2,7 @@
 SELECT outs.ANIMAL_ID, outs.NAME
 FROM ANIMAL_OUTS as outs
 LEFT JOIN ANIMAL_INS as ins ON outs.ANIMAL_ID = ins.ANIMAL_ID
-where ins.ANIMAL_TYPE IS NULL
+where ins.ANIMAL_ID IS NULL
 ORDER BY outs.ANIMAL_ID ASC;
 
 -- 입양은 갔지만, 보호소에 들어온 기록이 없는 동물의 id와 이름
