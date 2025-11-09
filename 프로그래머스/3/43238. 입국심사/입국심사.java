@@ -1,36 +1,39 @@
 class Solution {
     public long solution(int n, int[] times) {
-        long answer = 0;
+        long answer = Long.MAX_VALUE;
         long left = 1;
-        long right = 0;
+        long maxTime = 0;
         for (int time:times){
-            right = Math.max(time, right);
+            maxTime = Math.max(maxTime, time);
         }
-        right *= n;
-        while (left <= right){
-            long mid = (left + right) >>> 1;
-            if (count(mid, times) >= n){
-                answer = mid;
-                right = mid - 1;
+        long right = maxTime * n;
+        
+        while (left<=right){
+            long mid = (left+right)>>>1;
+            if (cal(mid, times)>=n){
+                answer = Math.min(answer, mid);
+                right = mid-1;
             } else {
-                left = mid + 1;
+                left = mid+1;
             }
         }
         return answer;
     }
     
-    private long count(long mid, int[] times){
+    private long cal(long mid, int[] times){
         long count = 0;
-        for (int time : times){
-            count += mid / time;
+        for (int time:times){
+            count += mid/time;
         }
         return count;
     }
-    // 7(3) 10(4) 14(5) 20(6) + 10 vs 21 + 7(6)
-    // 28 / 7 = 4;
-    // 28 / 10 = 2;
-    
-    // 30 / 7 = 4
-    // 30 / 10 = 3 
-    
+    // 입국심사 기다리는 사람 n
+    // 심사하는데 걸리는 시간 times
+    // 모든 사람이 심사를 받는데 걸리는 시간의 최솟값 
+    // 0 -> 7 -> 14 -> 21
+    // 0 -> 10 -> 20
+    // dp? 근데 범위가 너무 큰데..? 이분탐색?
+    // 28 = 7*4 , 10 * 2
+    // 28/7 + 28/10 = 4+2 = 6 // 맞음
+    // 파라메트릭서치? -> 시간
 }
