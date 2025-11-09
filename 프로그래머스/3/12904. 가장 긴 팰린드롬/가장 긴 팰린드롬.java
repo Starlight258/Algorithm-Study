@@ -2,27 +2,35 @@ class Solution
 {
     public int solution(String s)
     {
-        int answer = 0;
-        
-        for (int i=0;i<s.length();i++){
-            // 짝수 비교
-            int len1 = compare(s, i, i+1);
-            
-            // 홀수 비교(가운데 숫자부터 시작)
-            int len2= compare(s, i, i);
-            
-            int len = Math.max(len1, len2);
-            answer = Math.max(answer, len);
+        int answer = 1;
+        int n = s.length();
+        for (int i=0;i<n;i++){
+            char cur = s.charAt(i);
+            for (int j=i+1;j<n;j++){
+                if (cur != s.charAt(j)){
+                    continue;
+                }
+                int left = i;
+                int right = j;
+                boolean isPalin = true;
+                while (left<=right){
+                    if (s.charAt(left) != s.charAt(right)){
+                        isPalin = false;
+                        break;
+                    }
+                    left++; right--;
+                }
+                if (isPalin){
+                    answer = Math.max(answer, j-i+1);
+                }
+            }
         }
-
         return answer;
     }
-    
-    public int compare(String s, int left, int right){
-        while (left>=0 && right<s.length() && s.charAt(left)==s.charAt(right)){
-            left--;
-            right++;
-        }
-         return right - left - 1;
-    }
+    // s -> 가장 긴 팰린드롬의 길이
+    // abcdcba : 7
+    // abacde : 3
+    // two pointer? -> O(n)
+    // 같은 글자를 찾고, 그 글자를 뒤바꾸면 같으면 (reverse()) -> 팰린드롬
+    // 2500 * 2500 = 9_000_000
 }
