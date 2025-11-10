@@ -1,51 +1,48 @@
-import java.util.*;
-
 class Solution {
     public int solution(String s) {
-        int n = s.length();
-        int answer = n;
-        List<String> str = new ArrayList<>();
-        for (int c=1; c<=n/2; c++){
-            // 자르기
-            str = new ArrayList<>();
-            for (int i=0;i<n;i+=c){
-                if (i+c>=n){
-                    str.add(s.substring(i)); 
+        int answer = s.length();
+        int size = 1;
+        while (size<=s.length()/2){
+            int start =0;
+            StringBuilder result = new StringBuilder();
+            String prev = "", cur = "";
+            int count = 1;
+            while (start+size<=s.length()){ // 같을 경우 정상, 커질 경우 문제
+                cur = s.substring(start, start+size);
+                if (prev.equals(cur)){
+                    count++;
                 } else {
-                    str.add(s.substring(i, i+c)); 
+                    if (count==1) result.append(prev);
+                    else result.append(count).append(prev);
+                    count = 1;
                 }
+                prev = cur;
+                start+=size;
+            }
+                   
+            if (start != s.length()){
+                cur = s.substring(start);
+                if (prev.equals(cur)){
+                    result.append(count+1).append(prev);
+                } else {
+                    if (count==1) result.append(prev);
+                    else result.append(count).append(prev);
+                    count = 1;
+                }
+                prev = cur;
             }
             
-            // 같은 경우 count 추가하기
-            String prev = "";
-            int count = 1;
-            StringBuilder sb = new StringBuilder();
-            boolean hasAppend = false;
-            for (String word:str){
-                if (word.equals(prev)){
-                    count++;
-                    hasAppend = false;
-                } else {
-                    if (count!=1){
-                        sb.append(count);
-                    }
-                    sb.append(prev);
-                    hasAppend = true;
-                    count=1;
-                }
-                prev = word;
-            }
-
-            if (count!=1){
-                sb.append(count);
-            }
-            sb.append(prev);
-
-            answer = Math.min(answer, sb.length());
+            if (count==1) result.append(cur);
+            else result.append(count).append(cur);
+            prev = cur;
+           
+            answer = Math.min(answer, result.length());
+            size++;
         }
-        
         return answer;
     }
-    // 1~n/2 글자까지 쪼개서 count
-    // count+글자.. 가장 짧은 것의 길이
+    // 앞에서부터 차근차근 반복되는 문자열 구하기
+    // 2~n/2까지 길이 자르기 -> StringBuilder?
+    // StringBuilder에 저장해서 숫자 붙이기
+    // 구현
 }
