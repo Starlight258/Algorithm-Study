@@ -1,36 +1,85 @@
 import java.util.*;
-import java.util.regex.*;
 
 class Solution {
+    class File implements Comparable<File>{
+        String head;
+        String number;
+        String tail;
+        
+        File(String head, String number, String tail){
+            this.head = head;
+            this.number = number;
+            this.tail = tail;
+        }
+        
+        public int compareTo(File o){
+            String ohead = o.head.toUpperCase();
+            String hhead = this.head.toUpperCase();
+            if (ohead.equals(hhead)){
+                if (!this.number.equals(o.number)){
+                    int tNumber = Integer.parseInt(this.number);
+                    int oNumber = Integer.parseInt(o.number);
+                    return Integer.compare(tNumber, oNumber); // 오름차순 정렬
+                }
+                return 0;
+            }
+            return hhead.compareTo(ohead); // 오름차순 정렬
+        }
+    }
+    
     public String[] solution(String[] files) {
-        String regex = "([A-Za-z- ]+)([0-9]+)(.*)";
-        Pattern pattern = Pattern.compile(regex);
-        List<List<String>> splited = new ArrayList<>();
-        for (String file:files){
-            Matcher matcher = pattern.matcher(file);
-            while (matcher.find()){
-                String head = matcher.group(1);
-                String number = matcher.group(2);
-                String tail = matcher.groupCount()==3?matcher.group(3):"";
-                splited.add(List.of(head, number, tail));                
+        List<File> comFile = new ArrayList<>();
+        for (String file: files){
+            int firstNumber = 0;
+            int firstTail = 0;
+            boolean hasNumber = false;
+            for (int i=0;i<file.length();i++){
+                char c = file.charAt(i);
+                int numberCount = 0;
+                if (!hasNumber && c>='0' && c<='9'){
+                    firstNumber = i;
+                    hasNumber = true;
+                    continue;
+                }
+                if (hasNumber){
+                    numberCount++;
+                    if (numberCount>5){
+                        firstTail = i;
+                        break;
+                    }
+                    if (!Character.isDigit(c)){
+                        firstTail = i;
+                        break;
+                    }
+                }
             }
-        }
-        // 정렬
-        Collections.sort(splited, (s1, s2)->{
-            String ss1 = s1.get(0).toLowerCase();
-            String ss2 = s2.get(0).toLowerCase();
-            int result = ss1.compareTo(ss2);
-            if (result != 0){
-                return result;
+            String head = file.substring(0, firstNumber);
+            String number;
+            String tail;
+            if (firstTail==0){
+                number = file.substring(firstNumber);
+                tail = "";
+            } else {
+                number = file.substring(firstNumber, firstTail);
+                tail = file.substring(firstTail);
             }
-            int number1 = Integer.parseInt(s1.get(1));
-            int number2 = Integer.parseInt(s2.get(1));
-            return Integer.compare(number1, number2);
-        });
-        List<String> answer = new ArrayList<>();
-        for (List<String> split:splited){
-            answer.add(String.join("", split));
+            
+            comFile.add(new File(head, number, tail));
         }
-        return answer.toArray(new String[0]);
+        Collections.sort(comFile);
+        String[] answer = new String[comFile.size()];
+        for (int i=0;i<comFile.size();i++){
+            File f = comFile.get(i);
+            answer[i] = f.head + f.number + f.tail;
+        }
+  
+        return answer;
     }
 }
+//  ver-9.zip ->  ver-10.zip
+// img1.png", "img2.png", "img10.png", img12.png : 숫자순으로 정렬하도록 (숫자 추출)
+//  파일명에 포함된 숫자를 반영한 정렬 기능
+// 영문 대소문자, 숫자, 공백(" "), 마침표("."), 빼기 부호("-")
+// HEAD + NUMBER + TAIL
+// 문자(한 글자 이상) + 숫자(최대5글자) + TAIL(숫자 or 아무글자)
+// HEAD 순으로 정렬 -> NUMBER 순으로 정렬(앞 O 무시) -> 같으면 입력 순서 유지 
