@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class Main {
     /*
@@ -22,16 +21,15 @@ public class Main {
         int n = Integer.parseInt(br.readLine());
         int max = 1_000_000;
         int[] dp = new int[max + 1];
-        Arrays.fill(dp, max);
         dp[1] = 0;
         for (int x = 2; x <= n; x++) {
+            dp[x] = dp[x - 1] + 1;
             if (x % 2 == 0) {
                 dp[x] = Math.min(dp[x], dp[x / 2] + 1);
             }
             if (x % 3 == 0) {
                 dp[x] = Math.min(dp[x], dp[x / 3] + 1);
             }
-            dp[x] = Math.min(dp[x], dp[x - 1] + 1);
         }
         System.out.println(dp[n]);
     }
