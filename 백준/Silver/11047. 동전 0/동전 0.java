@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -12,7 +11,8 @@ public class Main {
     동전을 적절히 사용해서 그 가치의 합을 K로 만들려고 한다. 이때 필요한 동전 개수의 최솟값을 구하는 프로그램을 작성하시오.
      */
     /*
-    dp[i] = i원을 만들 수 있는 동전 개수의 최솟값
+    동전 간 배수 관계 성립 -> 가장 큰 동전부터 차례대로 최대한 많이 사용
+    4200 = 1000 * 4 + 100 * 2 = 6
     10 4200
     1
     5
@@ -24,15 +24,7 @@ public class Main {
     5000
     10000
     50000
-    dp[0] = 0
-    dp[1] = 1;
-    dp[2] = dp[2-1] + 1 = 2;
-    dp[3] = dp[3-1] + 1 = 3;
-    dp[4] = dp[4-1] + 1 = 4;
-    dp[5] = dp[5-1] + 1 = 5
-     = dp[5-5] + 1 = 1
-    dp[10] = dp[9] + 1 or dp[5] + 1 or dp[0] + 1 -> 1
-    dp[i] = dp[i-동전 금액] + 1
+
      */
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -43,18 +35,15 @@ public class Main {
         for (int i = 0; i < n; i++) {
             coins[i] = Integer.parseInt(br.readLine());
         }
-        int[] dp = new int[k + 1];
-        Arrays.fill(dp, 100_000_001);
-        dp[0] = 0;
-        for (int i = coins[0]; i <= k; i++) {
-            for (int j = 0; j < n; j++) {
-                int coin = coins[j];
-                if (i < coin) {
-                    continue;
-                }
-                dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+
+        int count = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            int coin = coins[i];
+            if (coin <= k) {
+                count += k / coin;
+                k %= coin;
             }
         }
-        System.out.println(dp[k]);
+        System.out.println(count);
     }
 }
