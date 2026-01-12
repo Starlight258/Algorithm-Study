@@ -6,41 +6,49 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    private static int n;
-    private static int[] numbers;
-
+    /*
+    N개의 정수 A[1], A[2], …, A[N]이 주어져 있을 때, 이 안에 X라는 정수가 존재하는지 알아내는 프로그램을 작성하시오.
+     */
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(br.readLine());
-        numbers = new int[n];
+        int n = Integer.parseInt(br.readLine());
+        int[] nums = new int[n];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
-            numbers[i] = Integer.parseInt(st.nextToken());
+            nums[i] = Integer.parseInt(st.nextToken());
         }
-        Arrays.sort(numbers);
+        Arrays.sort(nums);
 
         int m = Integer.parseInt(br.readLine());
-        int[] finders = new int[m];
         st = new StringTokenizer(br.readLine());
+        int[] picks = new int[m];
         for (int i = 0; i < m; i++) {
-            finders[i] = Integer.parseInt(st.nextToken());
-            System.out.println(findd(finders[i])? 1 : 0);
+            picks[i] = Integer.parseInt(st.nextToken());
         }
-    }
-
-    private static boolean findd(final int finder) {
-        int left = 0;
-        int right = n - 1;
-        while (left <= right) {
-            int mid = (left + right) >>> 1;
-            if (numbers[mid] == finder) {
-                return true;
-            } else if (numbers[mid] < finder) {
-                left = mid + 1;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < m; i++) {
+            boolean hasFound = false;
+            int pick = picks[i];
+            // 이분 탐색하기
+            int left = 0;
+            int right = n - 1;
+            while (left <= right) {
+                int mid = (right - left) / 2 + left;
+                if (nums[mid] == pick) {
+                    hasFound = true;
+                    break;
+                } else if (nums[mid] < pick) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            if (hasFound) {
+                sb.append(1).append("\n");
             } else {
-                right = mid - 1;
+                sb.append(0).append("\n");
             }
         }
-        return false;
+        System.out.println(sb);
     }
 }
