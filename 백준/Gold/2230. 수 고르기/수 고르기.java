@@ -29,16 +29,17 @@ public class Main {
             nums[i] = Integer.parseInt(br.readLine());
         }
         Arrays.sort(nums);
+
         int left = 0;
         int right = 0;
         int answer = Integer.MAX_VALUE;
         while (left <= right && right < n) {
             int diff = nums[right] - nums[left];
-            if (diff >= m) {
+            if (diff >= m) { // 차이가 크면 줄여보기
                 answer = Math.min(answer, diff);
                 left++;
             } else {
-                right++;
+                right++; // 차이 키우기
             }
         }
         System.out.println(answer);
