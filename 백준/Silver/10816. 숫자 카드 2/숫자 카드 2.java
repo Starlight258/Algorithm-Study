@@ -45,33 +45,32 @@ public class Main {
         System.out.println(sb);
     }
 
-    // 처음으로 해당 값이 존재하는 인덱스
+    // target보다 크거나 같은 첫 인덱스
     private static int lowerBound(int target) {
         int left = 0;
         int right = n;
         while (left < right) {
             int mid = (right - left) / 2 + left;
-            // 2 2 3 3 4 5 6
-            if (nums[mid] < target) { // 값이 작으면 update
-                left = mid + 1;
+            if (nums[mid] >= target) {
+                right = mid;
             } else {
-                right = mid; // 값이 크거나 같으면 pass
+                left = mid + 1;
             }
         }
+
         return left;
     }
 
-    // 처음으로 해당 값이 오르는 인덱스
+    // target보다 큰 첫 인덱스
     private static int upperBound(int target) {
         int left = 0;
         int right = n;
         while (left < right) {
             int mid = (right - left) / 2 + left;
-            // 2 2 3 3 4 5 6
-            if (nums[mid] <= target) { // 값이 작거나 같으면
-                left = mid + 1;
-            } else { // 값이 크면
+            if (nums[mid] > target) {
                 right = mid;
+            } else {
+                left = mid + 1;
             }
         }
         return left;
