@@ -61,13 +61,13 @@ public class Main {
         while (!q.isEmpty()) {
             int size = q.size();
             day++;
-            for (int i = 0; i < size; i++) {
+            while (size-- > 0) {
                 int[] cur = q.poll();
                 int y = cur[0];
                 int x = cur[1];
-                for (int j = 0; j < 4; j++) {
-                    int ny = y + dy[j];
-                    int nx = x + dx[j];
+                for (int i = 0; i < 4; i++) {
+                    int ny = y + dy[i];
+                    int nx = x + dx[i];
                     if (ny < 0 || nx < 0 || ny >= n || nx >= m) {
                         continue;
                     }
