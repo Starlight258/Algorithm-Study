@@ -1,60 +1,75 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
+    /*
+    미로에서 1은 이동할 수 있는 칸을 나타내고, 0은 이동할 수 없는 칸을 나타낸다.
+    이러한 미로가 주어졌을 때, (1, 1)에서 출발하여 (N, M)의 위치로 이동할 때 지나야 하는 최소의 칸 수를 구하는 프로그램을 작성하시오.
+    한 칸에서 다른 칸으로 이동할 때, 서로 인접한 칸으로만 이동할 수 있다.
 
-    private static final Queue<int[]> queue = new LinkedList<>();
-    private static int[][] arr;
+    위의 예에서는 15칸을 지나야 (N, M)의 위치로 이동할 수 있다. 칸을 셀 때에는 시작 위치와 도착 위치도 포함한다.
+     */
+    /*
+    4 6
+    101111
+    101010
+    101011
+    111011
+    최소의 칸 수
+     */
+
+    private static final int[] dy = {-1, 0, 1, 0};
+    private static final int[] dx = {0, 1, 0, -1};
+
     private static int n;
     private static int m;
+    private static int[][] maps;
     private static int[][] visited;
-    private static int[] dy = {-1, 0, 1, 0};
-    private static int[] dx = {0, 1, 0, -1};
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String[] split = br.readLine().split(" ");
-        n = Integer.parseInt(split[0]);
-        m = Integer.parseInt(split[1]);
-        arr = new int[n][m];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+        maps = new int[n][m];
         visited = new int[n][m];
         for (int i = 0; i < n; i++) {
             String line = br.readLine();
             for (int j = 0; j < m; j++) {
-                arr[i][j] = line.charAt(j) - '0';
+                maps[i][j] = line.charAt(j) - '0';
             }
         }
-        bfs();
+
+        System.out.println(bfs(0, 0));
     }
 
-    private static void bfs() {
-        queue.add(new int[]{0, 0});
-        visited[0][0] = 1;
+    private static int bfs(int y, int x) {
+        Queue<int[]> q = new ArrayDeque();
+        q.offer(new int[]{y, x});
+        visited[y][x] = 1;
 
-        while (!queue.isEmpty()) {
-            int[] now = queue.poll();
-            int y = now[0];
-            int x = now[1];
-
-            if (y == n - 1 && x == m - 1) {
-                System.out.println(visited[n - 1][m - 1]);
-                return;
-            }
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
             for (int i = 0; i < 4; i++) {
-                int ny = y + dy[i];
-                int nx = x + dx[i];
+                int ny = cur[0] + dy[i];
+                int nx = cur[1] + dx[i];
                 if (ny < 0 || nx < 0 || ny >= n || nx >= m) {
                     continue;
                 }
-                if (visited[ny][nx] != 0 || arr[ny][nx] == 0) {
+                if (visited[ny][nx] > 0 || maps[ny][nx] == 0) {
                     continue;
                 }
-                queue.offer(new int[]{ny, nx});
-                visited[ny][nx] = visited[y][x] + 1;
+                visited[ny][nx] = visited[cur[0]][cur[1]] + 1;
+                if (ny == n - 1 && nx == m - 1) {
+                    return visited[ny][nx];
+                }
+                q.offer(new int[]{ny, nx});
             }
         }
+        return -1;
     }
 }
