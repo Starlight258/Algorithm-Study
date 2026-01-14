@@ -30,14 +30,14 @@ public class Main {
         int end = 0;
         int answer = 0;
         long sum = 0;
-        while (start <= end) {
+        while (start <= end && end <=n) {
             if (sum >= m) {
                 if (sum == m) {
                     answer++;
                 }
                 sum -= nums[start];
                 start++;
-            } else if (end >= n) {
+            } else if (end == n) {
                 break;
             } else {
                 sum += nums[end];
